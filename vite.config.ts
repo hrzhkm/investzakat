@@ -9,7 +9,18 @@ import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { nitro } from 'nitro/vite'
 
-const config = defineConfig({
+export default defineConfig(({ isSsrBuild }) => ({
+  resolve: {
+    alias: isSsrBuild
+      ? {}
+      : {
+          buffer: 'buffer',
+          'node:buffer': 'buffer',
+        },
+  },
+  define: {
+    global: 'globalThis',
+  },
   plugins: [
     devtools(),
     nitro({ rollupConfig: { external: [/^@sentry\//] } }),
@@ -19,6 +30,4 @@ const config = defineConfig({
     tanstackStart(),
     viteReact(),
   ],
-})
-
-export default config
+}))
