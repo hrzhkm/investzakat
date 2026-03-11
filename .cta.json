@@ -21,7 +21,6 @@
     "prisma",
     "tanstack-query",
     "better-auth",
-    "shadcn",
-    "sentry"
+    "shadcn"
   ]
 }

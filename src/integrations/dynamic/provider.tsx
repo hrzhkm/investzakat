@@ -1,5 +1,4 @@
 import { DynamicContextProvider } from '@dynamic-labs/sdk-react-core'
-import { BitcoinWalletConnectors } from '@dynamic-labs/bitcoin'
 import { EthereumWalletConnectors } from '@dynamic-labs/ethereum'
 import { SolanaWalletConnectors } from '@dynamic-labs/solana'
 
@@ -21,7 +20,6 @@ export function DynamicProvider({ children }: DynamicProviderProps) {
         walletConnectors: [
           EthereumWalletConnectors,
           SolanaWalletConnectors,
-          BitcoinWalletConnectors,
         ],
       }}
     >
