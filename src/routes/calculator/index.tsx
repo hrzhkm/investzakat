@@ -231,7 +231,7 @@ function CalculatorPage() {
   }
 
   return (
-    <main className="min-h-[calc(100vh-6.75rem)] overflow-hidden bg-[linear-gradient(180deg,#fffdf7_0%,#f8fafc_34%,#eef6ff_100%)] px-4 pb-16 pt-8 sm:px-6 sm:pt-10 lg:px-8">
+    <main className="min-h-[calc(100vh-6.75rem)] overflow-hidden px-4 pb-16 pt-8 sm:px-6 sm:pt-10 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <motion.section
           animate="visible"
