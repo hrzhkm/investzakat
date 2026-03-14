@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   Wallet,
 } from 'lucide-react'
+import { validateEthereumAddress } from '../../lib/crypto/validateEthereumAddress'
 import { useLanguage } from '../../lib/i18n'
 
 export const Route = createFileRoute('/calculator/')({
@@ -72,6 +73,7 @@ const calculatorCopy = {
     networkLabel: 'Network',
     networkDescription:
       'Buat pilihan rangkaian asas sebelum alamat disimpan ke senarai pemantauan.',
+    ethereumValidationError: 'Masukkan alamat Ethereum yang sah.',
     chainsLabel: 'Ethereum Networks To Track',
     chainsDescription:
       'Ethereum mempunyai beberapa L2. Pilih rangkaian yang perlu dipantau bersama alamat ini.',
@@ -120,6 +122,7 @@ const calculatorCopy = {
     networkLabel: 'Network',
     networkDescription:
       'Choose the base network before saving the address into the watchlist.',
+    ethereumValidationError: 'Enter a valid Ethereum address.',
     chainsLabel: 'Ethereum Networks To Track',
     chainsDescription:
       'Ethereum spans multiple L2s. Select the networks that should be tracked with this address.',
@@ -176,6 +179,7 @@ function CalculatorPage() {
     'base',
   ])
   const [wallets, setWallets] = useState<WalletEntry[]>([])
+  const [addressError, setAddressError] = useState<string | null>(null)
 
   const trackedChainsCount = wallets.reduce((count, wallet) => {
     return count + (wallet.network === 'ethereum' ? wallet.chains.length : 1)
@@ -191,6 +195,14 @@ function CalculatorPage() {
       return
     }
 
+    if (
+      network === 'ethereum' &&
+      !validateEthereumAddress(trimmedAddress)
+    ) {
+      setAddressError(copy.ethereumValidationError)
+      return
+    }
+
     setWallets((current) => [
       {
         id: Date.now(),
@@ -201,6 +213,7 @@ function CalculatorPage() {
       ...current,
     ])
     setAddress('')
+    setAddressError(null)
   }
 
   function toggleEthereumChain(chain: EthereumChain) {
@@ -282,7 +295,12 @@ function CalculatorPage() {
                   <div className="mt-3 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto_auto]">
                     <input
                       className="h-14 rounded-[1.25rem] border border-slate-200 bg-slate-50 px-4 text-sm text-slate-950 outline-none transition focus:border-sky-400 focus:bg-white focus:ring-4 focus:ring-sky-100"
-                      onChange={(event) => setAddress(event.target.value)}
+                      onChange={(event) => {
+                        setAddress(event.target.value)
+                        if (addressError) {
+                          setAddressError(null)
+                        }
+                      }}
                       placeholder={copy.inputPlaceholder}
                       type="text"
                       value={address}
@@ -293,12 +311,18 @@ function CalculatorPage() {
                         <NetworkButton
                           active={network === 'solana'}
                           label={copy.solana}
-                          onClick={() => setNetwork('solana')}
+                          onClick={() => {
+                            setNetwork('solana')
+                            setAddressError(null)
+                          }}
                         />
                         <NetworkButton
                           active={network === 'ethereum'}
                           label={copy.ethereum}
-                          onClick={() => setNetwork('ethereum')}
+                          onClick={() => {
+                            setNetwork('ethereum')
+                            setAddressError(null)
+                          }}
                         />
                       </div>
                     </div>
@@ -319,6 +343,12 @@ function CalculatorPage() {
                     </span>
                     <span>{copy.networkDescription}</span>
                   </div>
+
+                  {addressError ? (
+                    <p className="mt-3 text-sm font-medium text-rose-600">
+                      {addressError}
+                    </p>
+                  ) : null}
 
                   {network === 'ethereum' ? (
                     <div className="mt-6 rounded-[1.5rem] border border-slate-200 bg-[linear-gradient(180deg,#f8fbff,#f4f7fb)] p-4">
