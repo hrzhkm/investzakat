@@ -44,6 +44,7 @@ export const en: AppTranslations = {
     networkLabel: 'Network',
     networkDescription:
       'Choose the base network before saving the address into the watchlist.',
+    solanaValidationError: 'Enter a valid Solana address.',
     ethereumValidationError: 'Enter a valid Ethereum address.',
     chainsLabel: 'Ethereum Networks To Track',
     chainsDescription:

@@ -31,6 +31,7 @@ export type CalculatorTranslations = {
   inputPlaceholder: string
   networkLabel: string
   networkDescription: string
+  solanaValidationError: string
   ethereumValidationError: string
   chainsLabel: string
   chainsDescription: string

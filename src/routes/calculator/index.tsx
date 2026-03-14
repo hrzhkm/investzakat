@@ -11,6 +11,7 @@ import {
   Wallet,
 } from 'lucide-react'
 import { validateEthereumAddress } from '../../lib/crypto/validateEthereumAddress'
+import { validateSolanaAddress } from '../../lib/crypto/validateSolanaAddress'
 import { useLanguage } from '../../lib/i18n'
 import { getTranslations } from '../../translations'
 import type { EthereumChain } from '../../translations/type'
@@ -93,6 +94,11 @@ function CalculatorPage() {
 
     const trimmedAddress = address.trim()
     if (!trimmedAddress) {
+      return
+    }
+
+    if (network === 'solana' && !validateSolanaAddress(trimmedAddress)) {
+      setAddressError(copy.solanaValidationError)
       return
     }
 
