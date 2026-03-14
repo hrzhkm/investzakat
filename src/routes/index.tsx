@@ -124,17 +124,20 @@ function HomePage() {
         </motion.section>
 
         <motion.section
-          className="mt-14"
+          className="relative mt-16"
           initial="hidden"
           variants={containerVariants}
           viewport={{ once: true, amount: 0.2 }}
           whileInView="visible"
         >
+          <div className="pointer-events-none absolute left-0 top-12 h-40 w-40 rounded-full bg-emerald-100/70 blur-3xl" />
+          <div className="pointer-events-none absolute right-0 top-0 h-48 w-48 rounded-full bg-sky-100/70 blur-3xl" />
+
           <motion.div
-            className="rounded-[2.5rem] border-2 border-slate-900/85 bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(247,249,252,0.88))] p-6 shadow-[0_26px_80px_rgba(15,23,42,0.1)] sm:p-8 lg:p-10"
+            className="relative"
             variants={itemVariants}
           >
-            <div className="max-w-2xl">
+            <div className="mx-auto max-w-2xl text-center">
               <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">
                 Cara Penggunaan
               </p>
@@ -147,10 +150,10 @@ function HomePage() {
               </p>
             </div>
 
-            <div className="mt-8 grid gap-5 lg:grid-cols-3">
+            <div className="mt-10 grid gap-6 lg:grid-cols-3">
               {usageSteps.map((step, index) => (
                 <motion.article
-                  className="rounded-[2rem] border-2 border-slate-900/85 bg-white/78 p-5 shadow-[0_18px_48px_rgba(15,23,42,0.08)]"
+                  className="relative overflow-hidden rounded-[2rem] border border-white/75 bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(246,249,252,0.88))] p-5 shadow-[0_22px_60px_rgba(15,23,42,0.1)] ring-1 ring-slate-200/70 backdrop-blur-sm"
                   key={step.step}
                   transition={{
                     duration: 0.95,
@@ -159,7 +162,12 @@ function HomePage() {
                   }}
                   variants={itemVariants}
                 >
-                  <div className="flex min-h-[13rem] items-center justify-center rounded-[1.75rem] border border-dashed border-slate-300 bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(244,247,251,0.92))]">
+                  <div className="pointer-events-none absolute inset-x-6 top-0 h-20 rounded-b-[2rem] bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.95),transparent_72%)]" />
+                  <div className="pointer-events-none absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-slate-950 text-xs font-semibold text-white shadow-[0_12px_24px_rgba(15,23,42,0.18)]">
+                    {index + 1}
+                  </div>
+
+                  <div className="relative flex min-h-[13rem] items-center justify-center rounded-[1.75rem] border border-dashed border-slate-300/90 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(244,247,251,0.92))]">
                     <div className="text-center">
                       <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.25rem] border border-slate-200 bg-white shadow-[0_12px_28px_rgba(15,23,42,0.08)]">
                         <span className="text-sm font-semibold tracking-[0.24em] text-slate-500">
