@@ -24,7 +24,7 @@ export default function Header() {
           </div>
 
           <Link
-            to="/calculator"
+            to="/crypto"
             className="relative inline-flex shrink-0 text-sm font-medium text-slate-700 no-underline transition-colors duration-200 hover:text-slate-950 after:absolute after:bottom-[-0.2rem] after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-300 hover:after:scale-x-100"
             activeProps={{
               className: 'text-slate-950 after:scale-x-100',

@@ -32,8 +32,8 @@ import { useLanguage } from '../../lib/i18n'
 import { getTranslations } from '../../translations'
 import type { EthereumChain } from '../../translations/type'
 
-export const Route = createFileRoute('/calculator/')({
-  component: CalculatorPage,
+export const Route = createFileRoute('/crypto/')({
+  component: CryptoPage,
 })
 
 type Network = 'solana' | 'ethereum'
@@ -87,7 +87,7 @@ const hardcodedPortfolio = {
   zakatEstimate: 3_665,
 }
 
-function CalculatorPage() {
+function CryptoPage() {
   const { language } = useLanguage()
   const copy = getTranslations(language).calculator
   const networkOptions: Array<{ value: Network; label: string }> = [

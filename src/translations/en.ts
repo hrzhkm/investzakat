@@ -89,7 +89,7 @@ export const en: AppTranslations = {
     title: 'Language',
   },
   header: {
-    calculator: 'Calculator',
+    calculator: 'Crypto',
     wallet: 'Connect Wallet',
   },
 }
