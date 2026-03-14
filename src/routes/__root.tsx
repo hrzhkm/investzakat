@@ -64,7 +64,7 @@ function RootDocumentFrame({ children }: { children: React.ReactNode }) {
       </head>
       <body className="min-h-screen text-slate-950">
         <TanStackQueryProvider>
-          <DynamicProvider>
+          {/* <DynamicProvider> */}
             <div className="relative min-h-screen overflow-hidden bg-[#eef2f7]">
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.95),_transparent_30%),radial-gradient(circle_at_85%_15%,_rgba(191,219,254,0.75),_transparent_24%),radial-gradient(circle_at_50%_120%,_rgba(167,243,208,0.5),_transparent_32%),linear-gradient(180deg,_#f9fbff_0%,_#e8eef8_52%,_#dde7f3_100%)]" />
               <div className="pointer-events-none absolute left-1/2 top-[-8rem] h-[22rem] w-[22rem] -translate-x-1/2 rounded-full bg-white/60 blur-3xl" />
@@ -89,7 +89,7 @@ function RootDocumentFrame({ children }: { children: React.ReactNode }) {
                 />
               </div>
             </div>
-          </DynamicProvider>
+          {/* </DynamicProvider> */}
         </TanStackQueryProvider>
         <Scripts />
       </body>
