@@ -3,12 +3,23 @@ import {
   useDynamicContext,
 } from '@dynamic-labs/sdk-react-core'
 import { Link } from '@tanstack/react-router'
+import { useLanguage } from '../lib/i18n'
 
 const hasDynamicEnvironmentId = Boolean(
   import.meta.env.VITE_DYNAMIC_ENVIRONMENT_ID,
 )
 
 export default function Header() {
+  const { language } = useLanguage()
+  const copy =
+    language === 'ms'
+      ? {
+          wallet: 'Sambung Wallet',
+        }
+      : {
+          wallet: 'Connect Wallet',
+        }
+
   return (
     <header className="relative z-20 px-4 pt-7 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
@@ -26,14 +37,14 @@ export default function Header() {
             </Link>
           </div>
 
-          <WalletAction />
+          <WalletAction label={copy.wallet} />
         </nav>
       </div>
     </header>
   )
 }
 
-function WalletAction() {
+function WalletAction({ label }: { label: string }) {
   const buttonClassName =
     'inline-flex h-10 min-w-[9.5rem] items-center justify-center rounded-full border border-white/50 bg-[linear-gradient(180deg,rgba(255,255,255,0.42),rgba(255,255,255,0.18))] px-5 text-sm font-semibold text-slate-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_10px_30px_rgba(15,23,42,0.12)] transition duration-200 hover:-translate-y-0.5 hover:bg-[linear-gradient(180deg,rgba(255,255,255,0.56),rgba(255,255,255,0.24))] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.62),0_18px_36px_rgba(15,23,42,0.16)] active:translate-y-0'
 
@@ -44,27 +55,33 @@ function WalletAction() {
         disabled
         type="button"
       >
-        Connect Wallet
+        {label}
       </button>
     )
   }
 
-  return <ConnectedWalletAction buttonClassName={buttonClassName} />
+  return <ConnectedWalletAction buttonClassName={buttonClassName} label={label} />
 }
 
-function ConnectedWalletAction({ buttonClassName }: { buttonClassName: string }) {
+function ConnectedWalletAction({
+  buttonClassName,
+  label,
+}: {
+  buttonClassName: string
+  label: string
+}) {
   const { primaryWallet } = useDynamicContext()
   const address = primaryWallet?.address
-  const label = address
+  const buttonLabel = address
     ? `${address.slice(0, 6)}...${address.slice(-4)}`
-    : 'Connect Wallet'
+    : label
 
   return (
     <DynamicConnectButton
       buttonClassName={buttonClassName}
       buttonContainerClassName="contents"
     >
-      {label}
+      {buttonLabel}
     </DynamicConnectButton>
   )
 }

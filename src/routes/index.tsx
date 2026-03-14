@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { createFileRoute } from '@tanstack/react-router'
+import { useLanguage } from '../lib/i18n'
 
 export const Route = createFileRoute('/')({ component: HomePage })
 
@@ -32,28 +33,79 @@ const itemVariants = {
   },
 }
 
-const usageSteps = [
-  {
-    step: 'Step 01',
-    title: 'Masukkan maklumat pelaburan',
-    description:
-      'Isi nilai simpanan atau pelaburan anda supaya pengiraan bermula dengan angka yang jelas.',
+const homepageCopy = {
+  ms: {
+    heroTitle: 'Kira zakat pelaburan anda dengan lebih mudah',
+    heroDescription:
+      'Titik permulaan yang lebih jelas untuk aliran zakat anda, dengan fokus visual yang bersih dan ruang untuk pengalaman kalkulator seterusnya.',
+    visualTitle: 'Ruang visual utama',
+    visualDescription:
+      'Pratonton kalkulator, ilustrasi produk, atau visual penerangan boleh dipaparkan di sini.',
+    usageEyebrow: 'Cara Penggunaan',
+    usageTitle: 'Tiga langkah ringkas untuk mula kira zakat pelaburan anda',
+    usageDescription:
+      'Susun aliran penggunaan dengan jelas supaya pengguna faham apa yang perlu dibuat dari awal hingga keputusan akhir.',
+    placeholder: 'Visual sementara',
+    steps: [
+      {
+        step: 'Langkah 01',
+        title: 'Masukkan maklumat pelaburan',
+        description:
+          'Isi nilai simpanan atau pelaburan anda supaya pengiraan bermula dengan angka yang jelas.',
+      },
+      {
+        step: 'Langkah 02',
+        title: 'Semak kelayakan zakat',
+        description:
+          'Bandingkan jumlah anda dengan syarat asas seperti nisab dan tempoh pegangan yang berkaitan.',
+      },
+      {
+        step: 'Langkah 03',
+        title: 'Lihat anggaran akhir',
+        description:
+          'Dapatkan anggaran zakat yang mudah dibaca sebelum anda teruskan ke tindakan seterusnya.',
+      },
+    ],
   },
-  {
-    step: 'Step 02',
-    title: 'Semak kelayakan zakat',
-    description:
-      'Bandingkan jumlah anda dengan syarat asas seperti nisab dan tempoh pegangan yang berkaitan.',
+  en: {
+    heroTitle: 'Calculate your investment zakat with less friction',
+    heroDescription:
+      'A clearer starting point for your zakat flow, with a clean visual focus and room for the calculator experience underneath.',
+    visualTitle: 'Primary visual space',
+    visualDescription:
+      'A calculator preview, product illustration, or supporting visual can live here.',
+    usageEyebrow: 'How It Works',
+    usageTitle: 'Three simple steps to start calculating your investment zakat',
+    usageDescription:
+      'Keep the flow clear so users understand what to do from the first input through the final estimate.',
+    placeholder: 'Placeholder visual',
+    steps: [
+      {
+        step: 'Step 01',
+        title: 'Enter your investment details',
+        description:
+          'Fill in your savings or investment amount so the calculation starts with a clear figure.',
+      },
+      {
+        step: 'Step 02',
+        title: 'Check zakat eligibility',
+        description:
+          'Compare your total against core conditions such as nisab and the relevant holding period.',
+      },
+      {
+        step: 'Step 03',
+        title: 'Review the final estimate',
+        description:
+          'Get a readable zakat estimate before moving on to the next action.',
+      },
+    ],
   },
-  {
-    step: 'Step 03',
-    title: 'Lihat anggaran akhir',
-    description:
-      'Dapatkan anggaran zakat yang mudah dibaca sebelum anda teruskan ke tindakan seterusnya.',
-  },
-] as const
+} as const
 
 function HomePage() {
+  const { language } = useLanguage()
+  const copy = homepageCopy[language]
+
   return (
     <main className="min-h-[calc(100vh-6.75rem)] px-4 pb-16 pt-8 sm:px-6 sm:pt-10 lg:px-8">
       <div className="mx-auto max-w-6xl">
@@ -71,11 +123,10 @@ function HomePage() {
               InvestZakat
             </p>
             <h1 className="mt-5 text-4xl font-semibold tracking-[-0.06em] text-slate-950 sm:text-5xl lg:text-6xl">
-              Calculate Your Investment Zakat Effortlessly
+              {copy.heroTitle}
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
-              A simpler starting point for your zakat flow, with a clean visual
-              focus and room for the calculator experience underneath.
+              {copy.heroDescription}
             </p>
           </motion.div>
 
@@ -110,11 +161,10 @@ function HomePage() {
                   </div>
                   <div>
                     <p className="text-lg font-semibold tracking-[-0.03em] text-slate-950 sm:text-2xl">
-                      Image Placeholder
+                      {copy.visualTitle}
                     </p>
                     <p className="mt-2 text-sm text-slate-500 sm:text-base">
-                      Future product visual, calculator preview, or
-                      illustration.
+                      {copy.visualDescription}
                     </p>
                   </div>
                 </motion.div>
@@ -139,19 +189,18 @@ function HomePage() {
           >
             <div className="mx-auto max-w-2xl text-center">
               <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">
-                Cara Penggunaan
+                {copy.usageEyebrow}
               </p>
               <h2 className="mt-4 text-3xl font-semibold tracking-[-0.05em] text-slate-950 sm:text-4xl">
-                Tiga langkah ringkas untuk mula kira zakat pelaburan anda
+                {copy.usageTitle}
               </h2>
               <p className="mt-4 text-base leading-7 text-slate-600">
-                Susun aliran penggunaan dengan jelas supaya pengguna faham apa
-                yang perlu dibuat dari awal hingga keputusan akhir.
+                {copy.usageDescription}
               </p>
             </div>
 
             <div className="mt-10 grid gap-6 lg:grid-cols-3">
-              {usageSteps.map((step, index) => (
+              {copy.steps.map((step, index) => (
                 <motion.article
                   className="relative overflow-hidden rounded-[2rem] border border-white/75 bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(246,249,252,0.88))] p-5 shadow-[0_22px_60px_rgba(15,23,42,0.1)] ring-1 ring-slate-200/70 backdrop-blur-sm"
                   key={step.step}
@@ -175,7 +224,7 @@ function HomePage() {
                         </span>
                       </div>
                       <p className="mt-4 text-sm text-slate-500">
-                        Placeholder visual
+                        {copy.placeholder}
                       </p>
                     </div>
                   </div>

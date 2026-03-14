@@ -9,6 +9,8 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import TanStackQueryProvider from '../integrations/tanstack-query/root-provider'
 import { DynamicProvider } from '../integrations/dynamic/provider'
 import Header from '../components/Header'
+import LanguageSwitcher from '../components/LanguageSwitcher'
+import { LanguageProvider, useLanguage } from '../lib/i18n'
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
@@ -31,7 +33,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'InvestZakat',
       },
     ],
     links: [
@@ -46,7 +48,17 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <LanguageProvider>
+      <RootDocumentFrame>{children}</RootDocumentFrame>
+    </LanguageProvider>
+  )
+}
+
+function RootDocumentFrame({ children }: { children: React.ReactNode }) {
+  const { language } = useLanguage()
+
+  return (
+    <html lang={language}>
       <head>
         <HeadContent />
       </head>
@@ -62,9 +74,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               <div className="relative z-10 min-h-screen">
                 <Header />
                 {children}
+                <LanguageSwitcher />
                 <TanStackDevtools
                   config={{
-                    position: 'bottom-right',
+                    position: 'bottom-left',
                   }}
                   plugins={[
                     {
