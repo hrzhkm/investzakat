@@ -219,7 +219,7 @@ function CalculatorPage() {
                     open={isAddWalletOpen}
                   >
                     <DialogTrigger asChild>
-                      <Button className="h-12 rounded-xl px-5 shadow-[0_16px_34px_rgba(15,23,42,0.18)]">
+                      <Button className="h-12 rounded-xl border border-slate-950 bg-slate-950 px-5 text-white shadow-[0_16px_34px_rgba(15,23,42,0.18)] hover:bg-slate-800">
                         <Plus className="h-4 w-4" />
                         {copy.addWallet}
                       </Button>
@@ -366,7 +366,7 @@ function CalculatorPage() {
 
                           <div className="mt-6 flex justify-end border-t border-slate-200/80 pt-5">
                             <Button
-                              className="h-12 rounded-xl px-6 shadow-[0_16px_34px_rgba(15,23,42,0.18)]"
+                              className="h-12 rounded-xl border border-slate-950 bg-slate-950 px-6 text-white shadow-[0_16px_34px_rgba(15,23,42,0.18)] hover:bg-slate-800"
                               disabled={!address.trim()}
                               type="submit"
                             >
