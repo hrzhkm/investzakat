@@ -18,7 +18,10 @@ export default defineConfig(({ isSsrBuild }) => ({
         }
       : {
           buffer: 'buffer',
-          'node:buffer': 'buffer',
+          // Prisma's generated server client imports `node:buffer`.
+          // Rewriting it to bare `buffer` breaks Vite dev SSR because this
+          // project does not install the browser polyfill package.
+          'node:buffer': 'node:buffer',
         },
   },
   define: {

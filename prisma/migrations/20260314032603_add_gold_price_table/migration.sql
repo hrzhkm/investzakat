@@ -1,0 +1,21 @@
+-- CreateTable
+CREATE TABLE "Todo" (
+    "id" SERIAL NOT NULL,
+    "title" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Todo_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "goldData" (
+    "id" SERIAL NOT NULL,
+    "asset" TEXT NOT NULL DEFAULT 'XAUT',
+    "currency" TEXT NOT NULL DEFAULT 'MYR',
+    "priceMyr" DOUBLE PRECISION NOT NULL,
+    "rawData" JSONB NOT NULL,
+    "fetchedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "goldData_pkey" PRIMARY KEY ("id")
+);
