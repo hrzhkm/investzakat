@@ -11,6 +11,8 @@ type JsonValue =
 type JsonObject = { [key: string]: JsonValue | null }
 type JsonArray = Array<JsonValue | null>
 
+const GRAMS_PER_TROY_OUNCE = 31.1034768
+
 function getTodayRange(now = new Date()) {
   const start = new Date(now)
   start.setHours(0, 0, 0, 0)
@@ -35,6 +37,27 @@ export async function getLatestGoldDataForToday(now = new Date()) {
       fetchedAt: 'desc',
     },
   })
+}
+
+export function convertGoldPriceMyrPerOunceToGram(priceMyrPerOunce: number) {
+  return priceMyrPerOunce / GRAMS_PER_TROY_OUNCE
+}
+
+export async function getLatestGoldPricePerGram() {
+  const latestGoldData = await prisma.goldData.findFirst({
+    orderBy: {
+      fetchedAt: 'desc',
+    },
+  })
+
+  if (!latestGoldData) {
+    return null
+  }
+
+  return {
+    ...latestGoldData,
+    priceMyrPerGram: convertGoldPriceMyrPerOunceToGram(latestGoldData.priceMyr),
+  }
 }
 
 export async function createGoldData(data: {
