@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { createFileRoute } from '@tanstack/react-router'
 import { useLanguage } from '../lib/i18n'
+import { getTranslations } from '../translations'
 
 export const Route = createFileRoute('/')({ component: HomePage })
 
@@ -33,78 +34,9 @@ const itemVariants = {
   },
 }
 
-const homepageCopy = {
-  ms: {
-    heroTitle: 'Kira zakat pelaburan anda dengan lebih mudah',
-    heroDescription:
-      'Titik permulaan yang lebih jelas untuk aliran zakat anda, dengan fokus visual yang bersih dan ruang untuk pengalaman kalkulator seterusnya.',
-    visualTitle: 'Ruang visual utama',
-    visualDescription:
-      'Pratonton kalkulator, ilustrasi produk, atau visual penerangan boleh dipaparkan di sini.',
-    usageEyebrow: 'Cara Penggunaan',
-    usageTitle: 'Tiga langkah ringkas untuk mula kira zakat pelaburan anda',
-    usageDescription:
-      'Susun aliran penggunaan dengan jelas supaya pengguna faham apa yang perlu dibuat dari awal hingga keputusan akhir.',
-    placeholder: 'Visual sementara',
-    steps: [
-      {
-        step: 'Langkah 01',
-        title: 'Masukkan maklumat pelaburan',
-        description:
-          'Isi nilai simpanan atau pelaburan anda supaya pengiraan bermula dengan angka yang jelas.',
-      },
-      {
-        step: 'Langkah 02',
-        title: 'Semak kelayakan zakat',
-        description:
-          'Bandingkan jumlah anda dengan syarat asas seperti nisab dan tempoh pegangan yang berkaitan.',
-      },
-      {
-        step: 'Langkah 03',
-        title: 'Lihat anggaran akhir',
-        description:
-          'Dapatkan anggaran zakat yang mudah dibaca sebelum anda teruskan ke tindakan seterusnya.',
-      },
-    ],
-  },
-  en: {
-    heroTitle: 'Calculate your investment zakat with less friction',
-    heroDescription:
-      'A clearer starting point for your zakat flow, with a clean visual focus and room for the calculator experience underneath.',
-    visualTitle: 'Primary visual space',
-    visualDescription:
-      'A calculator preview, product illustration, or supporting visual can live here.',
-    usageEyebrow: 'How It Works',
-    usageTitle: 'Three simple steps to start calculating your investment zakat',
-    usageDescription:
-      'Keep the flow clear so users understand what to do from the first input through the final estimate.',
-    placeholder: 'Placeholder visual',
-    steps: [
-      {
-        step: 'Step 01',
-        title: 'Enter your investment details',
-        description:
-          'Fill in your savings or investment amount so the calculation starts with a clear figure.',
-      },
-      {
-        step: 'Step 02',
-        title: 'Check zakat eligibility',
-        description:
-          'Compare your total against core conditions such as nisab and the relevant holding period.',
-      },
-      {
-        step: 'Step 03',
-        title: 'Review the final estimate',
-        description:
-          'Get a readable zakat estimate before moving on to the next action.',
-      },
-    ],
-  },
-} as const
-
 function HomePage() {
   const { language } = useLanguage()
-  const copy = homepageCopy[language]
+  const copy = getTranslations(language).home
 
   return (
     <main className="min-h-[calc(100vh-6.75rem)] px-4 pb-16 pt-8 sm:px-6 sm:pt-10 lg:px-8">
@@ -115,10 +47,7 @@ function HomePage() {
           initial="hidden"
           variants={containerVariants}
         >
-          <motion.div
-            className="max-w-3xl text-center"
-            variants={itemVariants}
-          >
+          <motion.div className="max-w-3xl text-center" variants={itemVariants}>
             <p className="text-sm font-semibold uppercase tracking-[0.42em] text-slate-500">
               InvestZakat
             </p>
@@ -183,10 +112,7 @@ function HomePage() {
           <div className="pointer-events-none absolute left-0 top-12 h-40 w-40 rounded-full bg-emerald-100/70 blur-3xl" />
           <div className="pointer-events-none absolute right-0 top-0 h-48 w-48 rounded-full bg-sky-100/70 blur-3xl" />
 
-          <motion.div
-            className="relative"
-            variants={itemVariants}
-          >
+          <motion.div className="relative" variants={itemVariants}>
             <div className="mx-auto max-w-2xl text-center">
               <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">
                 {copy.usageEyebrow}

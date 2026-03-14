@@ -1,4 +1,5 @@
-import { useState, type FormEvent } from 'react'
+import type { FormEvent } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { createFileRoute } from '@tanstack/react-router'
 import {
@@ -11,13 +12,14 @@ import {
 } from 'lucide-react'
 import { validateEthereumAddress } from '../../lib/crypto/validateEthereumAddress'
 import { useLanguage } from '../../lib/i18n'
+import { getTranslations } from '../../translations'
+import type { EthereumChain } from '../../translations/type'
 
 export const Route = createFileRoute('/calculator/')({
   component: CalculatorPage,
 })
 
 type Network = 'solana' | 'ethereum'
-type EthereumChain = 'ethereum' | 'base' | 'arbitrum' | 'optimism'
 
 type WalletEntry = {
   id: number
@@ -62,107 +64,6 @@ const itemVariants = {
   },
 }
 
-const calculatorCopy = {
-  ms: {
-    eyebrow: 'Penjejak Wallet',
-    title: 'Mulakan dengan alamat wallet anda',
-    description:
-      'Masukkan alamat Solana atau Ethereum terlebih dahulu. Jika Ethereum dipilih, tandakan rangkaian tambahan yang anda mahu jejaki untuk portfolio dan zakat.',
-    inputLabel: 'Alamat Wallet',
-    inputPlaceholder: 'Tampal alamat wallet anda di sini',
-    networkLabel: 'Network',
-    networkDescription:
-      'Buat pilihan rangkaian asas sebelum alamat disimpan ke senarai pemantauan.',
-    ethereumValidationError: 'Masukkan alamat Ethereum yang sah.',
-    chainsLabel: 'Ethereum Networks To Track',
-    chainsDescription:
-      'Ethereum mempunyai beberapa L2. Pilih rangkaian yang perlu dipantau bersama alamat ini.',
-    addWallet: 'Tambah Wallet',
-    trackedTitle: 'Wallet Dipantau',
-    trackedDescription:
-      'Senarai ini akan digunakan kemudian untuk sambungan data aset sebenar.',
-    emptyState: 'Belum ada wallet ditambah.',
-    assetsTitle: 'Nilai Aset',
-    assetsDescription:
-      'Nilai ini masih hardcoded buat masa sekarang untuk memuktamadkan UI.',
-    liveValueLabel: 'Nilai semasa portfolio',
-    zakatStatusLabel: 'Status zakat',
-    zakatDue: 'Perlu bayar zakat',
-    zakatNotDue: 'Belum perlu bayar zakat',
-    zakatDescriptionDue:
-      'Jumlah aset anda melepasi anggaran nisab, jadi zakat pelaburan perlu dibayar.',
-    zakatDescriptionNotDue:
-      'Jumlah aset anda masih di bawah anggaran nisab semasa.',
-    zakatEstimateLabel: 'Anggaran zakat 2.5%',
-    nisabLabel: 'Anggaran nisab',
-    walletsCountLabel: 'Wallet dipantau',
-    chainsCountLabel: 'Network aktif',
-    breakdownTitle: 'Pecahan aset',
-    breakdown: [
-      { label: 'Token utama', value: 'RM 96,400' },
-      { label: 'Stablecoins', value: 'RM 31,250' },
-      { label: 'Yield / staking', value: 'RM 18,950' },
-    ],
-    solana: 'Solana',
-    ethereum: 'Ethereum',
-    chainLabels: {
-      ethereum: 'Ethereum Mainnet',
-      base: 'Base',
-      arbitrum: 'Arbitrum',
-      optimism: 'Optimism',
-    },
-  },
-  en: {
-    eyebrow: 'Wallet Tracker',
-    title: 'Start with your wallet address',
-    description:
-      'Enter a Solana or Ethereum address first. If Ethereum is selected, mark the extra networks you want tracked for portfolio and zakat calculations.',
-    inputLabel: 'Wallet Address',
-    inputPlaceholder: 'Paste your wallet address here',
-    networkLabel: 'Network',
-    networkDescription:
-      'Choose the base network before saving the address into the watchlist.',
-    ethereumValidationError: 'Enter a valid Ethereum address.',
-    chainsLabel: 'Ethereum Networks To Track',
-    chainsDescription:
-      'Ethereum spans multiple L2s. Select the networks that should be tracked with this address.',
-    addWallet: 'Add Wallet',
-    trackedTitle: 'Tracked Wallets',
-    trackedDescription:
-      'This list will feed the real asset data connection in the next step.',
-    emptyState: 'No wallet has been added yet.',
-    assetsTitle: 'Assets Value',
-    assetsDescription:
-      'These values are hardcoded for now so the UI can be finalized first.',
-    liveValueLabel: 'Current portfolio value',
-    zakatStatusLabel: 'Zakat status',
-    zakatDue: 'Zakat payment required',
-    zakatNotDue: 'Zakat payment not required yet',
-    zakatDescriptionDue:
-      'Your asset value is above the current nisab estimate, so investment zakat is payable.',
-    zakatDescriptionNotDue:
-      'Your asset value is still below the current nisab estimate.',
-    zakatEstimateLabel: '2.5% zakat estimate',
-    nisabLabel: 'Estimated nisab',
-    walletsCountLabel: 'Tracked wallets',
-    chainsCountLabel: 'Active networks',
-    breakdownTitle: 'Asset breakdown',
-    breakdown: [
-      { label: 'Core tokens', value: 'RM 96,400' },
-      { label: 'Stablecoins', value: 'RM 31,250' },
-      { label: 'Yield / staking', value: 'RM 18,950' },
-    ],
-    solana: 'Solana',
-    ethereum: 'Ethereum',
-    chainLabels: {
-      ethereum: 'Ethereum Mainnet',
-      base: 'Base',
-      arbitrum: 'Arbitrum',
-      optimism: 'Optimism',
-    },
-  },
-} as const
-
 const hardcodedPortfolio = {
   total: 146_600,
   nisab: 28_000,
@@ -171,7 +72,7 @@ const hardcodedPortfolio = {
 
 function CalculatorPage() {
   const { language } = useLanguage()
-  const copy = calculatorCopy[language]
+  const copy = getTranslations(language).calculator
   const [address, setAddress] = useState('')
   const [network, setNetwork] = useState<Network>('solana')
   const [selectedChains, setSelectedChains] = useState<EthereumChain[]>([
@@ -195,10 +96,7 @@ function CalculatorPage() {
       return
     }
 
-    if (
-      network === 'ethereum' &&
-      !validateEthereumAddress(trimmedAddress)
-    ) {
+    if (network === 'ethereum' && !validateEthereumAddress(trimmedAddress)) {
       setAddressError(copy.ethereumValidationError)
       return
     }
@@ -424,7 +322,7 @@ function CalculatorPage() {
                               >
                                 {chain === 'solana'
                                   ? copy.solana
-                                  : copy.chainLabels[chain]}
+                                  : copy.chainLabels[chain as EthereumChain]}
                               </span>
                             ))}
                           </div>

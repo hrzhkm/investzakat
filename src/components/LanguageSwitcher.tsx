@@ -2,17 +2,7 @@ import { Languages } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
 import { getLanguageLabel, useLanguage } from '../lib/i18n'
 import type { Language } from '../lib/i18n'
-
-const switcherCopy = {
-  ms: {
-    action: 'Tukar bahasa',
-    title: 'Bahasa',
-  },
-  en: {
-    action: 'Change language',
-    title: 'Language',
-  },
-} as const
+import { getTranslations } from '../translations'
 
 const supportedLanguages: Language[] = ['ms', 'en']
 
@@ -21,7 +11,7 @@ export default function LanguageSwitcher() {
   const [isOpen, setIsOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement | null>(null)
   const menuId = useId()
-  const copy = switcherCopy[language]
+  const copy = getTranslations(language).languageSwitcher
 
   useEffect(() => {
     function handlePointerDown(event: PointerEvent) {

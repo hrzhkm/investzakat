@@ -4,6 +4,7 @@ import {
 } from '@dynamic-labs/sdk-react-core'
 import { Link } from '@tanstack/react-router'
 import { useLanguage } from '../lib/i18n'
+import { getTranslations } from '../translations'
 
 const hasDynamicEnvironmentId = Boolean(
   import.meta.env.VITE_DYNAMIC_ENVIRONMENT_ID,
@@ -11,14 +12,7 @@ const hasDynamicEnvironmentId = Boolean(
 
 export default function Header() {
   const { language } = useLanguage()
-  const copy =
-    language === 'ms'
-      ? {
-          wallet: 'Sambung Wallet',
-        }
-      : {
-          wallet: 'Connect Wallet',
-        }
+  const copy = getTranslations(language).header
 
   return (
     <header className="relative z-20 px-4 pt-7 sm:px-6 lg:px-8">
@@ -60,7 +54,9 @@ function WalletAction({ label }: { label: string }) {
     )
   }
 
-  return <ConnectedWalletAction buttonClassName={buttonClassName} label={label} />
+  return (
+    <ConnectedWalletAction buttonClassName={buttonClassName} label={label} />
+  )
 }
 
 function ConnectedWalletAction({
