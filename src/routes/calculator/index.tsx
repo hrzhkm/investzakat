@@ -10,6 +10,15 @@ import {
   ShieldCheck,
   Wallet,
 } from 'lucide-react'
+import { Button } from '#/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '#/components/ui/dialog'
 import { validateEthereumAddress } from '../../lib/crypto/validateEthereumAddress'
 import { validateSolanaAddress } from '../../lib/crypto/validateSolanaAddress'
 import { useLanguage } from '../../lib/i18n'
@@ -82,6 +91,7 @@ function CalculatorPage() {
   ])
   const [wallets, setWallets] = useState<WalletEntry[]>([])
   const [addressError, setAddressError] = useState<string | null>(null)
+  const [isAddWalletOpen, setIsAddWalletOpen] = useState(false)
 
   const trackedChainsCount = wallets.reduce((count, wallet) => {
     return count + (wallet.network === 'ethereum' ? wallet.chains.length : 1)
@@ -118,6 +128,7 @@ function CalculatorPage() {
     ])
     setAddress('')
     setAddressError(null)
+    setIsAddWalletOpen(false)
   }
 
   function toggleEthereumChain(chain: EthereumChain) {
@@ -188,115 +199,186 @@ function CalculatorPage() {
                   </div>
                 </div>
 
-                <form
-                  className="mt-8 rounded-[2rem] border border-slate-200 bg-white/90 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_18px_40px_rgba(15,23,42,0.06)] sm:p-5"
-                  onSubmit={handleSubmit}
-                >
-                  <label className="block text-sm font-semibold text-slate-700">
-                    {copy.inputLabel}
-                  </label>
-
-                  <div className="mt-3 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto_auto]">
-                    <input
-                      className="h-14 rounded-[1.25rem] border border-slate-200 bg-slate-50 px-4 text-sm text-slate-950 outline-none transition focus:border-sky-400 focus:bg-white focus:ring-4 focus:ring-sky-100"
-                      onChange={(event) => {
-                        setAddress(event.target.value)
-                        if (addressError) {
-                          setAddressError(null)
-                        }
-                      }}
-                      placeholder={copy.inputPlaceholder}
-                      type="text"
-                      value={address}
-                    />
-
-                    <div className="rounded-[1.25rem] border border-slate-200 bg-slate-50 p-1">
-                      <div className="grid h-full grid-cols-2 gap-1">
-                        <NetworkButton
-                          active={network === 'solana'}
-                          label={copy.solana}
-                          onClick={() => {
-                            setNetwork('solana')
-                            setAddressError(null)
-                          }}
-                        />
-                        <NetworkButton
-                          active={network === 'ethereum'}
-                          label={copy.ethereum}
-                          onClick={() => {
-                            setNetwork('ethereum')
-                            setAddressError(null)
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    <button
-                      className="inline-flex h-14 items-center justify-center gap-2 rounded-[1.25rem] border border-slate-950 bg-slate-950 px-5 text-sm font-semibold text-white shadow-[0_16px_34px_rgba(15,23,42,0.18)] transition hover:-translate-y-0.5 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:translate-y-0"
-                      disabled={!address.trim()}
-                      type="submit"
-                    >
-                      <Plus className="h-4 w-4" />
+                <div className="mt-8 flex items-center justify-between gap-4 rounded-[2rem] border border-slate-200 bg-white/90 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_18px_40px_rgba(15,23,42,0.06)] sm:p-5">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-950">
                       {copy.addWallet}
-                    </button>
-                  </div>
-
-                  <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-slate-500 sm:text-sm">
-                    <span className="font-semibold uppercase tracking-[0.22em] text-slate-400">
-                      {copy.networkLabel}
-                    </span>
-                    <span>{copy.networkDescription}</span>
-                  </div>
-
-                  {addressError ? (
-                    <p className="mt-3 text-sm font-medium text-rose-600">
-                      {addressError}
                     </p>
-                  ) : null}
+                    <p className="mt-1 text-sm leading-6 text-slate-600">
+                      {copy.networkDescription}
+                    </p>
+                  </div>
 
-                  {network === 'ethereum' ? (
-                    <div className="mt-6 rounded-[1.5rem] border border-slate-200 bg-[linear-gradient(180deg,#f8fbff,#f4f7fb)] p-4">
-                      <div className="flex items-center gap-3">
-                        <ShieldCheck className="h-5 w-5 text-sky-700" />
-                        <div>
-                          <p className="text-sm font-semibold text-slate-950">
-                            {copy.chainsLabel}
-                          </p>
-                          <p className="mt-1 text-sm leading-6 text-slate-600">
-                            {copy.chainsDescription}
-                          </p>
+                  <Dialog
+                    onOpenChange={(open) => {
+                      setIsAddWalletOpen(open)
+                      if (open) {
+                        setAddressError(null)
+                      }
+                    }}
+                    open={isAddWalletOpen}
+                  >
+                    <DialogTrigger asChild>
+                      <Button className="h-12 rounded-xl px-5 shadow-[0_16px_34px_rgba(15,23,42,0.18)]">
+                        <Plus className="h-4 w-4" />
+                        {copy.addWallet}
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-h-[85vh] w-[min(92vw,36rem)] max-w-none overflow-y-auto rounded-[2rem] border-slate-200 bg-[linear-gradient(180deg,rgba(255,255,255,0.99),rgba(249,250,251,0.99))] p-0 shadow-[0_40px_120px_rgba(15,23,42,0.22)]">
+                      <div className="relative">
+                        <div className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.14),transparent_48%),radial-gradient(circle_at_top_right,rgba(14,165,233,0.14),transparent_44%)]" />
+
+                        <div className="relative border-b border-slate-200/80 px-6 pb-6 pt-8 sm:px-8">
+                          <div className="flex items-start gap-4">
+                            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[1.4rem] border border-white/80 bg-white shadow-[0_18px_38px_rgba(15,23,42,0.08)]">
+                              <Wallet className="h-6 w-6 text-slate-950" />
+                            </div>
+
+                            <DialogHeader className="gap-3 text-left">
+                              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
+                                {copy.networkLabel}
+                              </p>
+                              <DialogTitle className="text-3xl font-semibold tracking-[-0.06em] text-slate-950">
+                                {copy.addWallet}
+                              </DialogTitle>
+                              <DialogDescription className="max-w-xl text-sm leading-7 text-slate-600 sm:text-base">
+                                {copy.description}
+                              </DialogDescription>
+                            </DialogHeader>
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                        {ethereumChainOptions.map((chain) => {
-                          const checked = selectedChains.includes(chain)
+                        <form className="px-6 py-6 sm:px-8 sm:py-8" onSubmit={handleSubmit}>
+                          <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-[0_20px_44px_rgba(15,23,42,0.06)] sm:p-6">
+                            <div className="space-y-5">
+                              <div>
+                                <label className="block text-sm font-semibold text-slate-700">
+                                  {copy.inputLabel}
+                                </label>
 
-                          return (
-                            <label
-                              className={`flex cursor-pointer items-center justify-between rounded-[1.2rem] border px-4 py-3 text-sm transition ${
-                                checked
-                                  ? 'border-slate-950 bg-slate-950 text-white shadow-[0_16px_30px_rgba(15,23,42,0.18)]'
-                                  : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
-                              }`}
-                              key={chain}
+                                <input
+                                  className="mt-3 h-14 w-full rounded-[1.2rem] border border-slate-200 bg-slate-50 px-4 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-sky-400 focus:bg-white focus:ring-4 focus:ring-sky-100"
+                                  onChange={(event) => {
+                                    setAddress(event.target.value)
+                                    if (addressError) {
+                                      setAddressError(null)
+                                    }
+                                  }}
+                                  placeholder={copy.inputPlaceholder}
+                                  type="text"
+                                  value={address}
+                                />
+
+                                {addressError ? (
+                                  <p className="mt-3 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-medium text-rose-700">
+                                    {addressError}
+                                  </p>
+                                ) : null}
+                              </div>
+
+                              <div className="rounded-[1.4rem] border border-slate-200 bg-[linear-gradient(180deg,#fbfdff,#f5f7fb)] p-4">
+                                <div className="flex items-start gap-3">
+                                  <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-[0_12px_24px_rgba(15,23,42,0.18)]">
+                                    <ShieldCheck className="h-4 w-4" />
+                                  </div>
+                                  <div>
+                                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
+                                      {copy.networkLabel}
+                                    </p>
+                                    <p className="mt-1 text-sm leading-6 text-slate-600">
+                                      {copy.networkDescription}
+                                    </p>
+                                  </div>
+                                </div>
+
+                                <div className="mt-4 rounded-[1.15rem] border border-slate-200 bg-white p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
+                                  <div className="grid grid-cols-2 gap-1.5">
+                                    <NetworkButton
+                                      active={network === 'solana'}
+                                      label={copy.solana}
+                                      onClick={() => {
+                                        setNetwork('solana')
+                                        setAddressError(null)
+                                      }}
+                                    />
+                                    <NetworkButton
+                                      active={network === 'ethereum'}
+                                      label={copy.ethereum}
+                                      onClick={() => {
+                                        setNetwork('ethereum')
+                                        setAddressError(null)
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {network === 'ethereum' ? (
+                            <div className="mt-5 rounded-[1.75rem] border border-slate-200 bg-[linear-gradient(180deg,#fbfdff,#f3f7fb)] p-5 shadow-[0_18px_40px_rgba(15,23,42,0.06)] sm:p-6">
+                              <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-100 text-sky-700">
+                                  <ShieldCheck className="h-4 w-4" />
+                                </div>
+                                <div>
+                                  <p className="text-sm font-semibold text-slate-950">
+                                    {copy.chainsLabel}
+                                  </p>
+                                  <p className="mt-1 text-sm leading-6 text-slate-600">
+                                    {copy.chainsDescription}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                                {ethereumChainOptions.map((chain) => {
+                                  const checked = selectedChains.includes(chain)
+
+                                  return (
+                                    <label
+                                      className={`flex cursor-pointer items-center justify-between rounded-[1.2rem] border px-4 py-3.5 text-sm transition ${
+                                        checked
+                                          ? 'border-slate-950 bg-slate-950 text-white shadow-[0_16px_30px_rgba(15,23,42,0.18)]'
+                                          : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+                                      }`}
+                                      key={chain}
+                                    >
+                                      <span className="font-semibold">
+                                        {copy.chainLabels[chain]}
+                                      </span>
+                                      <input
+                                        checked={checked}
+                                        className="h-4 w-4 accent-white"
+                                        onChange={() => toggleEthereumChain(chain)}
+                                        type="checkbox"
+                                      />
+                                    </label>
+                                  )
+                                })}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="mt-5 rounded-[1.4rem] border border-dashed border-slate-300 bg-slate-50 px-5 py-4 text-sm leading-6 text-slate-600">
+                              {copy.networkDescription}
+                            </div>
+                          )}
+
+                          <div className="mt-6 flex justify-end border-t border-slate-200/80 pt-5">
+                            <Button
+                              className="h-12 rounded-xl px-6 shadow-[0_16px_34px_rgba(15,23,42,0.18)]"
+                              disabled={!address.trim()}
+                              type="submit"
                             >
-                              <span className="font-semibold">
-                                {copy.chainLabels[chain]}
-                              </span>
-                              <input
-                                checked={checked}
-                                className="h-4 w-4 accent-white"
-                                onChange={() => toggleEthereumChain(chain)}
-                                type="checkbox"
-                              />
-                            </label>
-                          )
-                        })}
+                              <Plus className="h-4 w-4" />
+                              {copy.addWallet}
+                            </Button>
+                          </div>
+                        </form>
                       </div>
-                    </div>
-                  ) : null}
-                </form>
+                    </DialogContent>
+                  </Dialog>
+                </div>
 
                 <div className="mt-6 grid gap-4">
                   {wallets.length > 0 ? (
@@ -469,8 +551,8 @@ function NetworkButton({
     <button
       className={`rounded-[0.95rem] px-4 py-3 text-sm font-semibold transition ${
         active
-          ? 'bg-white text-slate-950 shadow-[0_10px_24px_rgba(15,23,42,0.08)]'
-          : 'text-slate-500 hover:text-slate-900'
+          ? 'bg-slate-950 text-white shadow-[0_12px_24px_rgba(15,23,42,0.16)]'
+          : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
       }`}
       onClick={onClick}
       type="button"
