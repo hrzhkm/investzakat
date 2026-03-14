@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiGoldRouteImport } from './routes/api/gold'
+import { Route as ApiFetchCoinsRouteImport } from './routes/api/fetchCoins'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiGoldRoute = ApiGoldRouteImport.update({
+  id: '/api/gold',
+  path: '/api/gold',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiFetchCoinsRoute = ApiFetchCoinsRouteImport.update({
+  id: '/api/fetchCoins',
+  path: '/api/fetchCoins',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/fetchCoins': typeof ApiFetchCoinsRoute
+  '/api/gold': typeof ApiGoldRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/fetchCoins': typeof ApiFetchCoinsRoute
+  '/api/gold': typeof ApiGoldRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/fetchCoins': typeof ApiFetchCoinsRoute
+  '/api/gold': typeof ApiGoldRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/api/fetchCoins' | '/api/gold'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/api/fetchCoins' | '/api/gold'
+  id: '__root__' | '/' | '/api/fetchCoins' | '/api/gold'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiFetchCoinsRoute: typeof ApiFetchCoinsRoute
+  ApiGoldRoute: typeof ApiGoldRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/gold': {
+      id: '/api/gold'
+      path: '/api/gold'
+      fullPath: '/api/gold'
+      preLoaderRoute: typeof ApiGoldRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/fetchCoins': {
+      id: '/api/fetchCoins'
+      path: '/api/fetchCoins'
+      fullPath: '/api/fetchCoins'
+      preLoaderRoute: typeof ApiFetchCoinsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiFetchCoinsRoute: ApiFetchCoinsRoute,
+  ApiGoldRoute: ApiGoldRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,4 +1,7 @@
-import { DynamicConnectButton } from '@dynamic-labs/sdk-react-core'
+import {
+  DynamicConnectButton,
+  useDynamicContext,
+} from '@dynamic-labs/sdk-react-core'
 import { Link } from '@tanstack/react-router'
 
 const hasDynamicEnvironmentId = Boolean(
@@ -46,12 +49,22 @@ function WalletAction() {
     )
   }
 
+  return <ConnectedWalletAction buttonClassName={buttonClassName} />
+}
+
+function ConnectedWalletAction({ buttonClassName }: { buttonClassName: string }) {
+  const { primaryWallet } = useDynamicContext()
+  const address = primaryWallet?.address
+  const label = address
+    ? `${address.slice(0, 6)}...${address.slice(-4)}`
+    : 'Connect Wallet'
+
   return (
     <DynamicConnectButton
       buttonClassName={buttonClassName}
       buttonContainerClassName="contents"
     >
-      Connect Wallet
+      {label}
     </DynamicConnectButton>
   )
 }

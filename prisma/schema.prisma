@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -11,4 +11,14 @@ model Todo {
   id        Int      @id @default(autoincrement())
   title     String
   createdAt DateTime @default(now())
+}
+
+model goldData {
+  id         Int      @id @default(autoincrement())
+  asset      String   @default("XAUT")
+  currency   String   @default("MYR")
+  priceMyr   Float
+  rawData    Json
+  fetchedAt  DateTime @default(now())
+  createdAt  DateTime @default(now())
 }

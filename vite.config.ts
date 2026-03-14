@@ -12,7 +12,10 @@ import { nitro } from 'nitro/vite'
 export default defineConfig(({ isSsrBuild }) => ({
   resolve: {
     alias: isSsrBuild
-      ? {}
+      ? {
+          buffer: 'node:buffer',
+          'node:buffer': 'node:buffer',
+        }
       : {
           buffer: 'buffer',
           'node:buffer': 'buffer',
