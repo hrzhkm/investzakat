@@ -7,6 +7,30 @@ export const Route = createFileRoute('/api/gold')({
     handlers: {
       GET: async () => {
         try {
+          const { createGoldData, getLatestGoldDataForToday } = await import(
+            '#/lib/server/goldData'
+          )
+          const existingGoldData = await getLatestGoldDataForToday()
+
+          if (existingGoldData) {
+            return Response.json(
+              {
+                id: existingGoldData.id,
+                asset: existingGoldData.asset,
+                currency: existingGoldData.currency,
+                priceMyr: existingGoldData.priceMyr,
+                fetchedAt: existingGoldData.fetchedAt,
+                createdAt: existingGoldData.createdAt,
+              },
+              {
+                headers: {
+                  'Cache-Control':
+                    'public, s-maxage=60, stale-while-revalidate=300',
+                },
+              },
+            )
+          }
+
           const apiKey = process.env.VITE_COINGECKO_API_KEY
           const endpoint = new URL(COINGECKO_XAUT_URL)
 
@@ -45,7 +69,6 @@ export const Route = createFileRoute('/api/gold')({
             )
           }
 
-          const { createGoldData } = await import('#/lib/server/goldData')
           const savedGoldData = await createGoldData({
             priceMyr,
             rawData: data,
