@@ -19,6 +19,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '#/components/ui/dialog'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '#/components/ui/select'
 import { validateEthereumAddress } from '../../lib/crypto/validateEthereumAddress'
 import { validateSolanaAddress } from '../../lib/crypto/validateSolanaAddress'
 import { useLanguage } from '../../lib/i18n'
@@ -83,6 +90,10 @@ const hardcodedPortfolio = {
 function CalculatorPage() {
   const { language } = useLanguage()
   const copy = getTranslations(language).calculator
+  const networkOptions: Array<{ value: Network; label: string }> = [
+    { value: 'solana', label: copy.solana },
+    { value: 'ethereum', label: copy.ethereum },
+  ]
   const [address, setAddress] = useState('')
   const [network, setNetwork] = useState<Network>('solana')
   const [selectedChains, setSelectedChains] = useState<EthereumChain[]>([
@@ -291,25 +302,25 @@ function CalculatorPage() {
                                   </div>
                                 </div>
 
-                                <div className="mt-4 rounded-[1.15rem] border border-slate-200 bg-white p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
-                                  <div className="grid grid-cols-2 gap-1.5">
-                                    <NetworkButton
-                                      active={network === 'solana'}
-                                      label={copy.solana}
-                                      onClick={() => {
-                                        setNetwork('solana')
-                                        setAddressError(null)
-                                      }}
-                                    />
-                                    <NetworkButton
-                                      active={network === 'ethereum'}
-                                      label={copy.ethereum}
-                                      onClick={() => {
-                                        setNetwork('ethereum')
-                                        setAddressError(null)
-                                      }}
-                                    />
-                                  </div>
+                                <div className="mt-4">
+                                  <Select
+                                    onValueChange={(value) => {
+                                      setNetwork(value as Network)
+                                      setAddressError(null)
+                                    }}
+                                    value={network}
+                                  >
+                                    <SelectTrigger className="h-13 rounded-[1.15rem] border-slate-200 bg-white">
+                                      <SelectValue placeholder={copy.networkLabel} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {networkOptions.map((option) => (
+                                        <SelectItem key={option.value} value={option.value}>
+                                          {option.label}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
                                 </div>
                               </div>
                             </div>
@@ -535,30 +546,6 @@ function CalculatorPage() {
         </motion.section>
       </div>
     </main>
-  )
-}
-
-function NetworkButton({
-  active,
-  label,
-  onClick,
-}: {
-  active: boolean
-  label: string
-  onClick: () => void
-}) {
-  return (
-    <button
-      className={`rounded-[0.95rem] px-4 py-3 text-sm font-semibold transition ${
-        active
-          ? 'bg-slate-950 text-white shadow-[0_12px_24px_rgba(15,23,42,0.16)]'
-          : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
-      }`}
-      onClick={onClick}
-      type="button"
-    >
-      {label}
-    </button>
   )
 }
 
