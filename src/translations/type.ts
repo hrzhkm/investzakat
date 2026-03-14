@@ -65,6 +65,7 @@ export type LanguageSwitcherTranslations = {
 
 export type HeaderTranslations = {
   calculator: string
+  nisab: string
   wallet: string
 }
 
