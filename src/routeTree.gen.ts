@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CalculatorIndexRouteImport } from './routes/calculator/index'
 import { Route as ApiGoldRouteImport } from './routes/api/gold'
 import { Route as ApiFetchCoinsRouteImport } from './routes/api/fetchCoins'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CalculatorIndexRoute = CalculatorIndexRouteImport.update({
+  id: '/calculator/',
+  path: '/calculator/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiGoldRoute = ApiGoldRouteImport.update({
@@ -33,30 +39,34 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/api/fetchCoins': typeof ApiFetchCoinsRoute
   '/api/gold': typeof ApiGoldRoute
+  '/calculator/': typeof CalculatorIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/fetchCoins': typeof ApiFetchCoinsRoute
   '/api/gold': typeof ApiGoldRoute
+  '/calculator': typeof CalculatorIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/api/fetchCoins': typeof ApiFetchCoinsRoute
   '/api/gold': typeof ApiGoldRoute
+  '/calculator/': typeof CalculatorIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/fetchCoins' | '/api/gold'
+  fullPaths: '/' | '/api/fetchCoins' | '/api/gold' | '/calculator/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/fetchCoins' | '/api/gold'
-  id: '__root__' | '/' | '/api/fetchCoins' | '/api/gold'
+  to: '/' | '/api/fetchCoins' | '/api/gold' | '/calculator'
+  id: '__root__' | '/' | '/api/fetchCoins' | '/api/gold' | '/calculator/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApiFetchCoinsRoute: typeof ApiFetchCoinsRoute
   ApiGoldRoute: typeof ApiGoldRoute
+  CalculatorIndexRoute: typeof CalculatorIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calculator/': {
+      id: '/calculator/'
+      path: '/calculator'
+      fullPath: '/calculator/'
+      preLoaderRoute: typeof CalculatorIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/gold': {
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApiFetchCoinsRoute: ApiFetchCoinsRoute,
   ApiGoldRoute: ApiGoldRoute,
+  CalculatorIndexRoute: CalculatorIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
