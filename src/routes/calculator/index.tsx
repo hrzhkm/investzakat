@@ -104,10 +104,6 @@ function CalculatorPage() {
   const [addressError, setAddressError] = useState<string | null>(null)
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false)
 
-  const trackedChainsCount = wallets.reduce((count, wallet) => {
-    return count + (wallet.network === 'ethereum' ? wallet.chains.length : 1)
-  }, 0)
-
   const zakatDue = hardcodedPortfolio.total >= hardcodedPortfolio.nisab
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -183,40 +179,22 @@ function CalculatorPage() {
             </p>
           </motion.div>
 
-          <motion.div
-            className="relative mt-12 grid gap-6 lg:grid-cols-[1.8fr_0.95fr]"
-            variants={itemVariants}
-          >
-            <section className="relative overflow-hidden rounded-[2.4rem] border border-slate-900/85 bg-[linear-gradient(160deg,rgba(255,255,255,0.96),rgba(245,248,252,0.92))] p-5 shadow-[0_30px_90px_rgba(15,23,42,0.15)] sm:p-7">
+          <motion.div className="relative mt-12 grid gap-6" variants={itemVariants}>
+            <section className="relative overflow-hidden rounded-[2.4rem] border border-slate-900/85 bg-[linear-gradient(180deg,#fffef8,#f7fbff)] p-5 shadow-[0_30px_90px_rgba(15,23,42,0.15)] sm:p-6">
               <div className="pointer-events-none absolute inset-x-8 top-0 h-24 rounded-b-[2rem] bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.95),transparent_72%)]" />
-              <div className="pointer-events-none absolute bottom-6 right-6 h-24 w-24 rounded-full bg-amber-100/80 blur-3xl" />
+              <div className="pointer-events-none absolute right-4 top-10 h-20 w-20 rounded-full bg-emerald-100/80 blur-2xl" />
 
               <div className="relative">
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <p className="text-sm font-semibold uppercase tracking-[0.26em] text-slate-500">
-                      {copy.inputLabel}
+                      {copy.assetsTitle}
                     </p>
-                    <h2 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-3xl">
-                      {copy.trackedTitle}
+                    <h2 className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-slate-950">
+                      RM {formatCurrency(hardcodedPortfolio.total)}
                     </h2>
-                    <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-                      {copy.trackedDescription}
-                    </p>
-                  </div>
-
-                  <div className="hidden rounded-[1.4rem] border border-slate-200 bg-white/80 p-3 shadow-[0_16px_36px_rgba(15,23,42,0.08)] sm:block">
-                    <Wallet className="h-7 w-7 text-slate-900" />
-                  </div>
-                </div>
-
-                <div className="mt-8 flex items-center justify-between gap-4 rounded-[2rem] border border-slate-200 bg-white/90 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_18px_40px_rgba(15,23,42,0.06)] sm:p-5">
-                  <div>
-                    <p className="text-sm font-semibold text-slate-950">
-                      {copy.addWallet}
-                    </p>
-                    <p className="mt-1 text-sm leading-6 text-slate-600">
-                      {copy.networkDescription}
+                    <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+                      {copy.assetsDescription}
                     </p>
                   </div>
 
@@ -391,98 +369,8 @@ function CalculatorPage() {
                   </Dialog>
                 </div>
 
-                <div className="mt-6 grid gap-4">
-                  {wallets.length > 0 ? (
-                    wallets.map((wallet) => (
-                      <article
-                        className="rounded-[1.7rem] border border-slate-200 bg-white/92 p-4 shadow-[0_18px_38px_rgba(15,23,42,0.06)]"
-                        key={wallet.id}
-                      >
-                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                          <div>
-                            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">
-                              {wallet.network === 'solana'
-                                ? copy.solana
-                                : copy.ethereum}
-                            </p>
-                            <p className="mt-2 break-all text-sm font-medium text-slate-900 sm:text-base">
-                              {wallet.address}
-                            </p>
-                          </div>
-
-                          <div className="flex flex-wrap gap-2">
-                            {(wallet.network === 'ethereum'
-                              ? wallet.chains
-                              : ['solana']
-                            ).map((chain) => (
-                              <span
-                                className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-slate-600"
-                                key={chain}
-                              >
-                                {chain === 'solana'
-                                  ? copy.solana
-                                  : copy.chainLabels[chain as EthereumChain]}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      </article>
-                    ))
-                  ) : (
-                    <div className="rounded-[1.7rem] border border-dashed border-slate-300 bg-white/60 px-5 py-10 text-center text-sm text-slate-500">
-                      {copy.emptyState}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </section>
-
-            <aside className="relative overflow-hidden rounded-[2.4rem] border border-slate-900/85 bg-[linear-gradient(180deg,#fffef8,#f7fbff)] p-5 shadow-[0_30px_90px_rgba(15,23,42,0.15)] sm:p-6">
-              <div className="pointer-events-none absolute inset-x-8 top-0 h-24 rounded-b-[2rem] bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.95),transparent_72%)]" />
-              <div className="pointer-events-none absolute right-4 top-10 h-20 w-20 rounded-full bg-emerald-100/80 blur-2xl" />
-
-              <div className="relative">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-sm font-semibold uppercase tracking-[0.26em] text-slate-500">
-                      {copy.assetsTitle}
-                    </p>
-                    <h2 className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-slate-950">
-                      RM {formatCurrency(hardcodedPortfolio.total)}
-                    </h2>
-                    <p className="mt-2 text-sm leading-6 text-slate-600">
-                      {copy.assetsDescription}
-                    </p>
-                  </div>
-
-                  <div className="rounded-[1.4rem] border border-slate-200 bg-white/85 p-3 shadow-[0_16px_36px_rgba(15,23,42,0.08)]">
-                    <Coins className="h-7 w-7 text-emerald-700" />
-                  </div>
-                </div>
-
-                <div className="mt-6 rounded-[1.7rem] border border-slate-200 bg-slate-950 p-5 text-white shadow-[0_24px_48px_rgba(15,23,42,0.22)]">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-300">
-                    {copy.liveValueLabel}
-                  </p>
-                  <p className="mt-3 text-4xl font-semibold tracking-[-0.05em]">
-                    RM {formatCurrency(hardcodedPortfolio.total)}
-                  </p>
-                  <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                    <SummaryStat
-                      icon={<Wallet className="h-4 w-4" />}
-                      label={copy.walletsCountLabel}
-                      value={String(wallets.length)}
-                    />
-                    <SummaryStat
-                      icon={<Landmark className="h-4 w-4" />}
-                      label={copy.chainsCountLabel}
-                      value={String(trackedChainsCount)}
-                    />
-                  </div>
-                </div>
-
                 <div
-                  className={`mt-5 rounded-[1.7rem] border p-5 ${
+                  className={`mt-6 rounded-[1.7rem] border p-5 ${
                     zakatDue
                       ? 'border-emerald-200 bg-emerald-50'
                       : 'border-amber-200 bg-amber-50'
@@ -541,33 +429,80 @@ function CalculatorPage() {
                   </div>
                 </div>
               </div>
-            </aside>
+            </section>
+
+            <section className="relative overflow-hidden rounded-[2.4rem] border border-slate-900/85 bg-[linear-gradient(160deg,rgba(255,255,255,0.96),rgba(245,248,252,0.92))] p-5 shadow-[0_30px_90px_rgba(15,23,42,0.15)] sm:p-7">
+              <div className="pointer-events-none absolute inset-x-8 top-0 h-24 rounded-b-[2rem] bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.95),transparent_72%)]" />
+              <div className="pointer-events-none absolute bottom-6 right-6 h-24 w-24 rounded-full bg-amber-100/80 blur-3xl" />
+
+              <div className="relative">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-sm font-semibold uppercase tracking-[0.26em] text-slate-500">
+                      {copy.inputLabel}
+                    </p>
+                    <h2 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-3xl">
+                      {copy.trackedTitle}
+                    </h2>
+                    <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
+                      {copy.trackedDescription}
+                    </p>
+                  </div>
+
+                  <div className="hidden rounded-[1.4rem] border border-slate-200 bg-white/80 p-3 shadow-[0_16px_36px_rgba(15,23,42,0.08)] sm:block">
+                    <Wallet className="h-7 w-7 text-slate-900" />
+                  </div>
+                </div>
+
+                <div className="mt-8 grid gap-4">
+                  {wallets.length > 0 ? (
+                    wallets.map((wallet) => (
+                      <article
+                        className="rounded-[1.7rem] border border-slate-200 bg-white/92 p-4 shadow-[0_18px_38px_rgba(15,23,42,0.06)]"
+                        key={wallet.id}
+                      >
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                          <div>
+                            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">
+                              {wallet.network === 'solana'
+                                ? copy.solana
+                                : copy.ethereum}
+                            </p>
+                            <p className="mt-2 break-all text-sm font-medium text-slate-900 sm:text-base">
+                              {wallet.address}
+                            </p>
+                          </div>
+
+                          <div className="flex flex-wrap gap-2">
+                            {(wallet.network === 'ethereum'
+                              ? wallet.chains
+                              : ['solana']
+                            ).map((chain) => (
+                              <span
+                                className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-slate-600"
+                                key={chain}
+                              >
+                                {chain === 'solana'
+                                  ? copy.solana
+                                  : copy.chainLabels[chain as EthereumChain]}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </article>
+                    ))
+                  ) : (
+                    <div className="rounded-[1.7rem] border border-dashed border-slate-300 bg-white/60 px-5 py-10 text-center text-sm text-slate-500">
+                      {copy.emptyState}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
           </motion.div>
         </motion.section>
       </div>
     </main>
-  )
-}
-
-function SummaryStat({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode
-  label: string
-  value: string
-}) {
-  return (
-    <div className="rounded-[1.2rem] border border-white/12 bg-white/8 p-3 backdrop-blur-sm">
-      <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-slate-300">
-        {icon}
-        <span>{label}</span>
-      </div>
-      <p className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-white">
-        {value}
-      </p>
-    </div>
   )
 }
 
