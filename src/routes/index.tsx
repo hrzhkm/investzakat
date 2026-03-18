@@ -68,35 +68,20 @@ function HomePage() {
               <div className="pointer-events-none absolute left-10 top-10 h-20 w-20 rounded-full bg-emerald-100/80 blur-2xl" />
               <div className="pointer-events-none absolute bottom-8 right-10 h-24 w-24 rounded-full bg-sky-100/80 blur-2xl" />
 
-              <div className="relative flex min-h-[18rem] items-center justify-center rounded-[2rem] border border-dashed border-slate-300 bg-white/65 sm:min-h-[24rem] lg:min-h-[27rem]">
-                <motion.div
+              <div className="relative overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white/80 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+                <motion.img
+                  alt={copy.visualTitle}
                   animate={{
                     y: [0, -8, 0],
                   }}
-                  className="flex flex-col items-center gap-4 text-center"
+                  className="block h-auto w-full"
+                  src="/images/calculator.png"
                   transition={{
                     duration: 5.5,
                     ease: 'easeInOut',
                     repeat: Number.POSITIVE_INFINITY,
                   }}
-                >
-                  <div className="flex h-20 w-20 items-center justify-center rounded-[1.75rem] border border-slate-200 bg-[linear-gradient(180deg,#ffffff,#eef4ff)] shadow-[0_18px_40px_rgba(15,23,42,0.08)]">
-                    <div className="grid h-9 w-9 grid-cols-2 gap-1">
-                      <span className="rounded-sm bg-emerald-300" />
-                      <span className="rounded-sm bg-sky-300" />
-                      <span className="rounded-sm bg-amber-200" />
-                      <span className="rounded-sm bg-slate-300" />
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-lg font-semibold tracking-[-0.03em] text-slate-950 sm:text-2xl">
-                      {copy.visualTitle}
-                    </p>
-                    <p className="mt-2 text-sm text-slate-500 sm:text-base">
-                      {copy.visualDescription}
-                    </p>
-                  </div>
-                </motion.div>
+                />
               </div>
             </div>
           </motion.div>
