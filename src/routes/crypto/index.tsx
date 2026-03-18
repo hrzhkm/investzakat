@@ -27,7 +27,10 @@ import { validateEthereumAddress } from '../../lib/crypto/validateEthereumAddres
 import { validateSolanaAddress } from '../../lib/crypto/validateSolanaAddress'
 import { useLanguage } from '../../lib/i18n'
 import { getTranslations } from '../../translations'
-import type { EthereumChain } from '../../translations/type'
+import type {
+  CalculatorTranslations,
+  EthereumChain,
+} from '../../translations/type'
 import type {
   Network,
   WalletBalanceRequest,
@@ -77,6 +80,8 @@ const itemVariants = {
     },
   },
 }
+
+const chartColors = ['#0f766e', '#0284c7', '#f59e0b', '#7c3aed', '#ef4444']
 
 function CryptoPage() {
   const { language } = useLanguage()
@@ -426,53 +431,63 @@ function CryptoPage() {
                   </div>
                 </div>
 
-                <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                  <MetricCard
-                    label={copy.zakatEstimateLabel}
-                    value={
-                      isSummaryLoading
-                        ? 'RM...'
-                        : formatMyrCurrency(zakatEstimate)
-                    }
-                  />
-                  <MetricCard
-                    label={copy.nisabLabel}
-                    value={
-                      nisabValue === null
-                        ? 'RM...'
-                        : formatMyrCurrency(nisabValue)
-                    }
-                  />
-                </div>
+                <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1.7fr)_minmax(20rem,0.9fr)]">
+                  <div>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <MetricCard
+                        label={copy.zakatEstimateLabel}
+                        value={
+                          isSummaryLoading
+                            ? 'RM...'
+                            : formatMyrCurrency(zakatEstimate)
+                        }
+                      />
+                      <MetricCard
+                        label={copy.nisabLabel}
+                        value={
+                          nisabValue === null
+                            ? 'RM...'
+                            : formatMyrCurrency(nisabValue)
+                        }
+                      />
+                    </div>
 
-                <div className="mt-5 rounded-[1.7rem] border border-slate-200 bg-white/90 p-5 shadow-[0_18px_36px_rgba(15,23,42,0.06)]">
-                  <p className="text-sm font-semibold text-slate-950">
-                    {copy.breakdownTitle}
-                  </p>
+                    <div className="mt-5 rounded-[1.7rem] border border-slate-200 bg-white/90 p-5 shadow-[0_18px_36px_rgba(15,23,42,0.06)]">
+                      <p className="text-sm font-semibold text-slate-950">
+                        {copy.breakdownTitle}
+                      </p>
 
-                  <div className="mt-4 space-y-3">
-                    {chainValues.length > 0 ? (
-                      chainValues.map((item) => (
-                        <div
-                          className="flex items-center justify-between rounded-[1rem] bg-slate-50 px-4 py-3 text-sm"
-                          key={item.chain}
-                        >
-                          <span className="text-slate-600">
-                            {item.chain === 'solana'
-                              ? copy.solana
-                              : copy.chainLabels[item.chain]}
-                          </span>
-                          <span className="font-semibold text-slate-950">
-                            {formatMyrCurrency(item.valueMyr)}
-                          </span>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="rounded-[1rem] bg-slate-50 px-4 py-3 text-sm text-slate-500">
-                        {copy.emptyState}
+                      <div className="mt-4 space-y-3">
+                        {chainValues.length > 0 ? (
+                          chainValues.map((item) => (
+                            <div
+                              className="flex items-center justify-between rounded-[1rem] bg-slate-50 px-4 py-3 text-sm"
+                              key={item.chain}
+                            >
+                              <span className="text-slate-600">
+                                {item.chain === 'solana'
+                                  ? copy.solana
+                                  : copy.chainLabels[item.chain]}
+                              </span>
+                              <span className="font-semibold text-slate-950">
+                                {formatMyrCurrency(item.valueMyr)}
+                              </span>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="rounded-[1rem] bg-slate-50 px-4 py-3 text-sm text-slate-500">
+                            {copy.emptyState}
+                          </div>
+                        )}
                       </div>
-                    )}
+                    </div>
                   </div>
+
+                  <AssetDistributionCard
+                    chainValues={chainValues}
+                    copy={copy}
+                    isLoading={isSummaryLoading}
+                  />
                 </div>
               </div>
             </section>
@@ -615,6 +630,117 @@ function MetricCard({ label, value }: { label: string; value: string }) {
   )
 }
 
+function AssetDistributionCard({
+  chainValues,
+  copy,
+  isLoading,
+}: {
+  chainValues: Array<{ chain: 'solana' | EthereumChain; valueMyr: number }>
+  copy: CalculatorTranslations
+  isLoading: boolean
+}) {
+  const total = chainValues.reduce((sum, item) => sum + item.valueMyr, 0)
+  const chartSegments =
+    total > 0
+      ? chainValues.map((item, index) => ({
+          ...item,
+          color: chartColors[index % chartColors.length],
+          percentage: (item.valueMyr / total) * 100,
+        }))
+      : []
+  const radius = 74
+  const circumference = 2 * Math.PI * radius
+  let offset = 0
+
+  return (
+    <aside className="rounded-[1.7rem] border border-slate-200 bg-white/92 p-5 shadow-[0_18px_36px_rgba(15,23,42,0.06)]">
+      <p className="text-sm font-semibold text-slate-950">
+        {copy.distributionTitle}
+      </p>
+
+      <div className="mt-5 flex flex-col items-center gap-6">
+        <div className="relative flex h-52 w-52 items-center justify-center">
+          <svg
+            aria-hidden="true"
+            className="-rotate-90"
+            height="200"
+            viewBox="0 0 200 200"
+            width="200"
+          >
+            <circle
+              cx="100"
+              cy="100"
+              r={radius}
+              fill="none"
+              stroke="#e2e8f0"
+              strokeWidth="26"
+            />
+            {chartSegments.map((segment) => {
+              const strokeLength = (segment.percentage / 100) * circumference
+              const strokeDashoffset = -offset
+
+              offset += strokeLength
+
+              return (
+                <circle
+                  key={segment.chain}
+                  cx="100"
+                  cy="100"
+                  r={radius}
+                  fill="none"
+                  stroke={segment.color}
+                  strokeDasharray={`${strokeLength} ${circumference}`}
+                  strokeDashoffset={strokeDashoffset}
+                  strokeWidth="26"
+                />
+              )
+            })}
+          </svg>
+
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+            <span className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
+              {copy.assetsTitle}
+            </span>
+            <span className="mt-2 text-2xl font-semibold tracking-[-0.05em] text-slate-950">
+              {isLoading ? 'RM...' : formatMyrCurrency(total)}
+            </span>
+          </div>
+        </div>
+
+        <div className="w-full space-y-2">
+          {chartSegments.length > 0 ? (
+            chartSegments.map((segment) => (
+              <div
+                className="flex items-center justify-between rounded-[1rem] bg-slate-50 px-3 py-2.5 text-sm"
+                key={segment.chain}
+              >
+                <div className="flex items-center gap-3">
+                  <span
+                    className="h-3 w-3 rounded-full"
+                    style={{ backgroundColor: segment.color }}
+                  />
+                  <span className="font-medium text-slate-700">
+                    {segment.chain === 'solana'
+                      ? copy.solana
+                      : copy.chainLabels[segment.chain]}
+                  </span>
+                </div>
+                <span className="font-semibold text-slate-950">
+                  {formatPercentage(segment.percentage)}
+                </span>
+              </div>
+            ))
+          ) : (
+            <div className="rounded-[1rem] bg-slate-50 px-4 py-3 text-sm text-slate-500">
+              {copy.emptyState}
+            </div>
+          )}
+        </div>
+      </div>
+    </aside>
+  )
+}
+
 function aggregateChainValues(
   walletBalanceQueries: Array<{
     data?: WalletNativeBalanceResult
@@ -666,4 +792,8 @@ function formatCurrency(value: number) {
 
 function formatMyrCurrency(value: number) {
   return `RM ${formatCurrency(value)}`
+}
+
+function formatPercentage(value: number) {
+  return `${value.toFixed(value >= 10 ? 0 : 1)}%`
 }

@@ -55,6 +55,7 @@ export type CalculatorTranslations = {
   balanceLoading: string
   balanceUnavailable: string
   breakdownTitle: string
+  distributionTitle: string
   breakdown: CalculatorBreakdownItem[]
   solana: string
   ethereum: string

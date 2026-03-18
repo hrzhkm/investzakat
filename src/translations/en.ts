@@ -73,6 +73,7 @@ export const en: AppTranslations = {
     balanceLoading: 'Fetching live balance...',
     balanceUnavailable: 'Unavailable',
     breakdownTitle: 'Asset breakdown',
+    distributionTitle: 'Asset distribution',
     breakdown: [],
     solana: 'Solana',
     ethereum: 'Ethereum',

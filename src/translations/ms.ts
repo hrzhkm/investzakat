@@ -73,6 +73,7 @@ export const ms: AppTranslations = {
     balanceLoading: 'Sedang ambil baki semasa...',
     balanceUnavailable: 'Tidak tersedia',
     breakdownTitle: 'Pecahan aset',
+    distributionTitle: 'Agihan aset',
     breakdown: [],
     solana: 'Solana',
     ethereum: 'Ethereum',
