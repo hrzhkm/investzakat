@@ -1,5 +1,5 @@
 import type { FormEvent } from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
@@ -82,6 +82,7 @@ const itemVariants = {
 }
 
 const chartColors = ['#0f766e', '#0284c7', '#f59e0b', '#7c3aed', '#ef4444']
+const WALLET_STORAGE_KEY = 'investzakat-crypto-wallets'
 
 function CryptoPage() {
   const { language } = useLanguage()
@@ -97,6 +98,7 @@ function CryptoPage() {
     'base',
   ])
   const [wallets, setWallets] = useState<WalletEntry[]>([])
+  const [hasLoadedWallets, setHasLoadedWallets] = useState(false)
   const [addressError, setAddressError] = useState<string | null>(null)
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false)
   const { data: nisabData } = useQuery(latestNisabQueryOptions)
@@ -123,6 +125,19 @@ function CryptoPage() {
   const summaryDescription = isCryptoPricesError
     ? copy.balanceUnavailable
     : copy.assetsDescription
+
+  useEffect(() => {
+    setWallets(getStoredWallets())
+    setHasLoadedWallets(true)
+  }, [])
+
+  useEffect(() => {
+    if (!hasLoadedWallets || typeof window === 'undefined') {
+      return
+    }
+
+    window.localStorage.setItem(WALLET_STORAGE_KEY, JSON.stringify(wallets))
+  }, [hasLoadedWallets, wallets])
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -563,19 +578,19 @@ function CryptoPage() {
                               {copy.nativeBalancesLabel}
                             </p>
 
-                            {balanceQuery?.isPending ? (
+                            {balanceQuery.isPending ? (
                               <p className="mt-3 text-sm text-slate-500">
                                 {copy.balanceLoading}
                               </p>
                             ) : null}
 
-                            {balanceQuery?.isError ? (
+                            {balanceQuery.isError ? (
                               <p className="mt-3 text-sm font-medium text-rose-600">
                                 {copy.balanceUnavailable}
                               </p>
                             ) : null}
 
-                            {balanceQuery?.data?.balances.length ? (
+                            {balanceQuery.data?.balances.length ? (
                               <div className="mt-3 grid gap-2">
                                 {balanceQuery.data.balances.map((balance) => (
                                   <div
@@ -786,6 +801,48 @@ function aggregateChainValues(
       valueMyr,
     }))
     .sort((left, right) => right.valueMyr - left.valueMyr)
+}
+
+function getStoredWallets(): WalletEntry[] {
+  if (typeof window === 'undefined') {
+    return []
+  }
+
+  const stored = window.localStorage.getItem(WALLET_STORAGE_KEY)
+  if (!stored) {
+    return []
+  }
+
+  try {
+    const parsed = JSON.parse(stored)
+    if (!Array.isArray(parsed)) {
+      return []
+    }
+
+    return parsed.filter(isWalletEntry)
+  } catch {
+    return []
+  }
+}
+
+function isWalletEntry(value: unknown): value is WalletEntry {
+  if (!value || typeof value !== 'object') {
+    return false
+  }
+
+  const wallet = value as Partial<WalletEntry>
+  const hasValidNetwork =
+    wallet.network === 'solana' || wallet.network === 'ethereum'
+  const hasValidChains =
+    Array.isArray(wallet.chains) &&
+    wallet.chains.every((chain) => ethereumChainOptions.includes(chain))
+
+  return (
+    typeof wallet.id === 'number' &&
+    typeof wallet.address === 'string' &&
+    hasValidNetwork &&
+    hasValidChains
+  )
 }
 
 function formatCurrency(value: number) {
