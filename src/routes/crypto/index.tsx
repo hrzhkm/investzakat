@@ -667,7 +667,8 @@ function AssetDistributionCard({
           percentage: (item.valueMyr / total) * 100,
         }))
       : []
-  const radius = 74
+  const radius = 72
+  const strokeWidth = 18
   const circumference = 2 * Math.PI * radius
   let offset = 0
 
@@ -678,13 +679,13 @@ function AssetDistributionCard({
       </p>
 
       <div className="mt-5 flex flex-col items-center gap-6">
-        <div className="relative flex h-52 w-52 items-center justify-center">
+        <div className="relative flex h-56 w-56 items-center justify-center sm:h-60 sm:w-60">
           <svg
             aria-hidden="true"
             className="-rotate-90"
-            height="200"
+            height="212"
             viewBox="0 0 200 200"
-            width="200"
+            width="212"
           >
             <circle
               cx="100"
@@ -692,7 +693,7 @@ function AssetDistributionCard({
               r={radius}
               fill="none"
               stroke="#e2e8f0"
-              strokeWidth="26"
+              strokeWidth={strokeWidth}
             />
             {chartSegments.map((segment) => {
               const strokeLength = (segment.percentage / 100) * circumference
@@ -710,14 +711,14 @@ function AssetDistributionCard({
                   stroke={segment.color}
                   strokeDasharray={`${strokeLength} ${circumference}`}
                   strokeDashoffset={strokeDashoffset}
-                  strokeWidth="26"
+                  strokeWidth={strokeWidth}
                 />
               )
             })}
           </svg>
 
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-            <span className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
+          <div className="absolute inset-0 flex flex-col items-center justify-center px-5 text-center">
+            <span className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-slate-400 sm:text-[0.72rem]">
               {copy.assetsTitle}
             </span>
             <span className="mt-2 text-2xl font-semibold tracking-[-0.05em] text-slate-950">
