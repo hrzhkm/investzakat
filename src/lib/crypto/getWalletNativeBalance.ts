@@ -50,30 +50,30 @@ const evmClients = new Map<
   ReturnType<typeof createPublicClient> | null
 >()
 
+export async function fetchWalletNativeBalance(
+  data: WalletBalanceRequest,
+): Promise<WalletNativeBalanceResult> {
+  assertValidWalletRequest(data)
+
+  const balances =
+    data.network === 'solana'
+      ? [await fetchSolanaBalance(data.address)]
+      : await Promise.all(
+          data.chains.map((chain) => fetchEvmBalance(chain, data.address)),
+        )
+
+  return {
+    address: data.address,
+    balances,
+  }
+}
+
 export const getWalletNativeBalance = createServerFn({
   method: 'POST',
 })
   .inputValidator((data: WalletBalanceRequest) => data)
-  .handler(
-    async ({
-      data,
-    }: {
-      data: WalletBalanceRequest
-    }): Promise<WalletNativeBalanceResult> => {
-      assertValidWalletRequest(data)
-
-      const balances =
-        data.network === 'solana'
-          ? [await fetchSolanaBalance(data.address)]
-          : await Promise.all(
-              data.chains.map((chain) => fetchEvmBalance(chain, data.address)),
-            )
-
-      return {
-        address: data.address,
-        balances,
-      }
-    },
+  .handler(async ({ data }: { data: WalletBalanceRequest }) =>
+    fetchWalletNativeBalance(data),
   )
 
 function assertValidWalletRequest(data: WalletBalanceRequest) {
