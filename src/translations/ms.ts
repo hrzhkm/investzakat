@@ -90,7 +90,9 @@ export const ms: AppTranslations = {
   },
   header: {
     calculator: 'Kripto',
+    comingSoon: 'Fungsi akan datang',
     nisab: 'Nisab',
+    stocks: 'Saham',
     wallet: 'Sambung Wallet',
   },
 }
