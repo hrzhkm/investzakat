@@ -671,6 +671,18 @@ function AssetDistributionCard({
   const strokeWidth = 18
   const circumference = 2 * Math.PI * radius
   let offset = 0
+  const chartSegmentsWithGeometry = chartSegments.map((segment) => {
+    const strokeLength = (segment.percentage / 100) * circumference
+    const strokeDashoffset = -offset
+
+    offset += strokeLength
+
+    return {
+      ...segment,
+      strokeLength,
+      strokeDashoffset,
+    }
+  })
 
   return (
     <aside className="h-full rounded-[1.7rem] border border-slate-200 bg-white/92 p-5 shadow-[0_18px_36px_rgba(15,23,42,0.06)]">
@@ -680,10 +692,13 @@ function AssetDistributionCard({
 
       <div className="mt-5 flex flex-col items-center gap-6">
         <div className="relative flex h-56 w-56 items-center justify-center sm:h-60 sm:w-60">
-          <svg
+          <motion.svg
             aria-hidden="true"
             className="-rotate-90"
             height="212"
+            initial={{ opacity: 0, scale: 0.94 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
             viewBox="0 0 200 200"
             width="212"
           >
@@ -695,36 +710,48 @@ function AssetDistributionCard({
               stroke="#e2e8f0"
               strokeWidth={strokeWidth}
             />
-            {chartSegments.map((segment) => {
-              const strokeLength = (segment.percentage / 100) * circumference
-              const strokeDashoffset = -offset
+            {chartSegmentsWithGeometry.map((segment, index) => (
+              <motion.circle
+                key={segment.chain}
+                cx="100"
+                cy="100"
+                r={radius}
+                fill="none"
+                stroke={segment.color}
+                strokeDasharray={`${segment.strokeLength} ${circumference}`}
+                strokeDashoffset={segment.strokeDashoffset}
+                strokeWidth={strokeWidth}
+                initial={{
+                  strokeDashoffset:
+                    segment.strokeDashoffset + segment.strokeLength,
+                  opacity: 0.6,
+                }}
+                animate={{
+                  strokeDashoffset: segment.strokeDashoffset,
+                  opacity: 1,
+                }}
+                transition={{
+                  duration: 0.85,
+                  delay: 0.12 + index * 0.12,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              />
+            ))}
+          </motion.svg>
 
-              offset += strokeLength
-
-              return (
-                <circle
-                  key={segment.chain}
-                  cx="100"
-                  cy="100"
-                  r={radius}
-                  fill="none"
-                  stroke={segment.color}
-                  strokeDasharray={`${strokeLength} ${circumference}`}
-                  strokeDashoffset={strokeDashoffset}
-                  strokeWidth={strokeWidth}
-                />
-              )
-            })}
-          </svg>
-
-          <div className="absolute inset-0 flex flex-col items-center justify-center px-5 text-center">
+          <motion.div
+            className="absolute inset-0 flex flex-col items-center justify-center px-5 text-center"
+            initial={{ opacity: 0, scale: 0.92, y: 6 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.28, ease: [0.16, 1, 0.3, 1] }}
+          >
             <span className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-slate-400 sm:text-[0.72rem]">
               {copy.assetsTitle}
             </span>
             <span className="mt-2 text-2xl font-semibold tracking-[-0.05em] text-slate-950">
               {isLoading ? 'RM...' : formatMyrCurrency(total)}
             </span>
-          </div>
+          </motion.div>
         </div>
 
         <div className="w-full space-y-2">
