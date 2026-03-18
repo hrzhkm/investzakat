@@ -51,6 +51,9 @@ export type CalculatorTranslations = {
   nisabLabel: string
   walletsCountLabel: string
   chainsCountLabel: string
+  nativeBalancesLabel: string
+  balanceLoading: string
+  balanceUnavailable: string
   breakdownTitle: string
   breakdown: CalculatorBreakdownItem[]
   solana: string

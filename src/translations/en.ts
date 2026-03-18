@@ -69,6 +69,9 @@ export const en: AppTranslations = {
     nisabLabel: 'Estimated nisab',
     walletsCountLabel: 'Tracked wallets',
     chainsCountLabel: 'Active networks',
+    nativeBalancesLabel: 'Native balances',
+    balanceLoading: 'Fetching live balance...',
+    balanceUnavailable: 'Unavailable',
     breakdownTitle: 'Asset breakdown',
     breakdown: [
       { label: 'Core tokens', value: 'RM 96,400' },

@@ -69,6 +69,9 @@ export const ms: AppTranslations = {
     nisabLabel: 'Anggaran nisab',
     walletsCountLabel: 'Wallet dipantau',
     chainsCountLabel: 'Network aktif',
+    nativeBalancesLabel: 'Baki native',
+    balanceLoading: 'Sedang ambil baki semasa...',
+    balanceUnavailable: 'Tidak tersedia',
     breakdownTitle: 'Pecahan aset',
     breakdown: [
       { label: 'Token utama', value: 'RM 96,400' },

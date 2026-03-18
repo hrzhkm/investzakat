@@ -1,15 +1,9 @@
 import type { FormEvent } from 'react'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { useQueries } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import {
-  BadgeCheck,
-  Coins,
-  Landmark,
-  Plus,
-  ShieldCheck,
-  Wallet,
-} from 'lucide-react'
+import { BadgeCheck, Plus, ShieldCheck, Wallet } from 'lucide-react'
 import { Button } from '#/components/ui/button'
 import {
   Dialog,
@@ -26,23 +20,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from '#/components/ui/select'
+import { walletNativeBalanceQueryOptions } from '../../lib/queries/walletBalance'
 import { validateEthereumAddress } from '../../lib/crypto/validateEthereumAddress'
 import { validateSolanaAddress } from '../../lib/crypto/validateSolanaAddress'
 import { useLanguage } from '../../lib/i18n'
 import { getTranslations } from '../../translations'
 import type { EthereumChain } from '../../translations/type'
+import type { Network, WalletBalanceRequest } from '../../lib/crypto/types'
 
 export const Route = createFileRoute('/crypto/')({
   component: CryptoPage,
 })
 
-type Network = 'solana' | 'ethereum'
-
-type WalletEntry = {
+type WalletEntry = WalletBalanceRequest & {
   id: number
-  address: string
-  network: Network
-  chains: EthereumChain[]
 }
 
 const ethereumChainOptions: EthereumChain[] = [
@@ -103,6 +94,9 @@ function CryptoPage() {
   const [wallets, setWallets] = useState<WalletEntry[]>([])
   const [addressError, setAddressError] = useState<string | null>(null)
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false)
+  const walletBalanceQueries = useQueries({
+    queries: wallets.map((wallet) => walletNativeBalanceQueryOptions(wallet)),
+  })
 
   const zakatDue = hardcodedPortfolio.total >= hardcodedPortfolio.nisab
 
@@ -179,7 +173,10 @@ function CryptoPage() {
             </p>
           </motion.div>
 
-          <motion.div className="relative mt-12 grid gap-6" variants={itemVariants}>
+          <motion.div
+            className="relative mt-12 grid gap-6"
+            variants={itemVariants}
+          >
             <section className="relative overflow-hidden rounded-[2.4rem] border border-slate-900/85 bg-[linear-gradient(180deg,#fffef8,#f7fbff)] p-5 shadow-[0_30px_90px_rgba(15,23,42,0.15)] sm:p-6">
               <div className="pointer-events-none absolute inset-x-8 top-0 h-24 rounded-b-[2rem] bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.95),transparent_72%)]" />
               <div className="pointer-events-none absolute right-4 top-10 h-20 w-20 rounded-full bg-emerald-100/80 blur-2xl" />
@@ -237,7 +234,10 @@ function CryptoPage() {
                           </div>
                         </div>
 
-                        <form className="px-6 py-6 sm:px-8 sm:py-8" onSubmit={handleSubmit}>
+                        <form
+                          className="px-6 py-6 sm:px-8 sm:py-8"
+                          onSubmit={handleSubmit}
+                        >
                           <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-[0_20px_44px_rgba(15,23,42,0.06)] sm:p-6">
                             <div className="space-y-5">
                               <div>
@@ -289,11 +289,16 @@ function CryptoPage() {
                                     value={network}
                                   >
                                     <SelectTrigger className="h-13 rounded-[1.15rem] border-slate-200 bg-white">
-                                      <SelectValue placeholder={copy.networkLabel} />
+                                      <SelectValue
+                                        placeholder={copy.networkLabel}
+                                      />
                                     </SelectTrigger>
                                     <SelectContent>
                                       {networkOptions.map((option) => (
-                                        <SelectItem key={option.value} value={option.value}>
+                                        <SelectItem
+                                          key={option.value}
+                                          value={option.value}
+                                        >
                                           {option.label}
                                         </SelectItem>
                                       ))}
@@ -339,7 +344,9 @@ function CryptoPage() {
                                       <input
                                         checked={checked}
                                         className="h-4 w-4 accent-white"
-                                        onChange={() => toggleEthereumChain(chain)}
+                                        onChange={() =>
+                                          toggleEthereumChain(chain)
+                                        }
                                         type="checkbox"
                                       />
                                     </label>
@@ -456,41 +463,91 @@ function CryptoPage() {
 
                 <div className="mt-8 grid gap-4">
                   {wallets.length > 0 ? (
-                    wallets.map((wallet) => (
-                      <article
-                        className="rounded-[1.7rem] border border-slate-200 bg-white/92 p-4 shadow-[0_18px_38px_rgba(15,23,42,0.06)]"
-                        key={wallet.id}
-                      >
-                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                          <div>
-                            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">
-                              {wallet.network === 'solana'
-                                ? copy.solana
-                                : copy.ethereum}
-                            </p>
-                            <p className="mt-2 break-all text-sm font-medium text-slate-900 sm:text-base">
-                              {wallet.address}
-                            </p>
+                    wallets.map((wallet, index) => {
+                      const balanceQuery = walletBalanceQueries[index]
+
+                      return (
+                        <article
+                          className="rounded-[1.7rem] border border-slate-200 bg-white/92 p-4 shadow-[0_18px_38px_rgba(15,23,42,0.06)]"
+                          key={wallet.id}
+                        >
+                          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">
+                                {wallet.network === 'solana'
+                                  ? copy.solana
+                                  : copy.ethereum}
+                              </p>
+                              <p className="mt-2 break-all text-sm font-medium text-slate-900 sm:text-base">
+                                {wallet.address}
+                              </p>
+                            </div>
+
+                            <div className="flex flex-wrap gap-2">
+                              {(wallet.network === 'ethereum'
+                                ? wallet.chains
+                                : ['solana']
+                              ).map((chain) => (
+                                <span
+                                  className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-slate-600"
+                                  key={chain}
+                                >
+                                  {chain === 'solana'
+                                    ? copy.solana
+                                    : copy.chainLabels[chain as EthereumChain]}
+                                </span>
+                              ))}
+                            </div>
                           </div>
 
-                          <div className="flex flex-wrap gap-2">
-                            {(wallet.network === 'ethereum'
-                              ? wallet.chains
-                              : ['solana']
-                            ).map((chain) => (
-                              <span
-                                className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-slate-600"
-                                key={chain}
-                              >
-                                {chain === 'solana'
-                                  ? copy.solana
-                                  : copy.chainLabels[chain as EthereumChain]}
-                              </span>
-                            ))}
+                          <div className="mt-4 rounded-[1.35rem] border border-slate-200 bg-slate-50/80 p-4">
+                            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">
+                              {copy.nativeBalancesLabel}
+                            </p>
+
+                            {balanceQuery?.isPending ? (
+                              <p className="mt-3 text-sm text-slate-500">
+                                {copy.balanceLoading}
+                              </p>
+                            ) : null}
+
+                            {balanceQuery?.isError ? (
+                              <p className="mt-3 text-sm font-medium text-rose-600">
+                                {copy.balanceUnavailable}
+                              </p>
+                            ) : null}
+
+                            {balanceQuery?.data?.balances.length ? (
+                              <div className="mt-3 grid gap-2">
+                                {balanceQuery.data.balances.map((balance) => (
+                                  <div
+                                    className="flex items-center justify-between rounded-[1rem] bg-white px-3 py-2.5 text-sm"
+                                    key={balance.chain}
+                                  >
+                                    <span className="font-medium text-slate-600">
+                                      {balance.chain === 'solana'
+                                        ? copy.solana
+                                        : copy.chainLabels[balance.chain]}
+                                    </span>
+                                    <span
+                                      className={`font-semibold ${
+                                        balance.error
+                                          ? 'text-rose-600'
+                                          : 'text-slate-950'
+                                      }`}
+                                    >
+                                      {balance.formatted
+                                        ? `${balance.formatted} ${balance.symbol}`
+                                        : copy.balanceUnavailable}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : null}
                           </div>
-                        </div>
-                      </article>
-                    ))
+                        </article>
+                      )
+                    })
                   ) : (
                     <div className="rounded-[1.7rem] border border-dashed border-slate-300 bg-white/60 px-5 py-10 text-center text-sm text-slate-500">
                       {copy.emptyState}
