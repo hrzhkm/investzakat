@@ -168,9 +168,9 @@ function CryptoPage() {
             className="mx-auto max-w-3xl text-center"
             variants={itemVariants}
           >
-            <p className="text-sm font-semibold uppercase tracking-[0.38em] text-slate-500">
+            {/* <p className="text-sm font-semibold uppercase tracking-[0.38em] text-slate-500">
               {copy.eyebrow}
-            </p>
+            </p> */}
             <h1 className="mt-5 text-4xl font-semibold tracking-[-0.06em] text-slate-950 sm:text-5xl lg:text-6xl">
               {copy.title}
             </h1>

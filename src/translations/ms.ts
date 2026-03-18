@@ -2,7 +2,7 @@ import type { AppTranslations } from './type'
 
 export const ms: AppTranslations = {
   home: {
-    heroTitle: 'Kira zakat pelaburan anda dengan lebih mudah',
+    heroTitle: 'Kira Zakat Pelaburan Anda — Dalam Beberapa Saat',
     heroDescription:
       'Titik permulaan yang lebih jelas untuk aliran zakat anda, dengan fokus visual yang bersih dan ruang untuk pengalaman kalkulator seterusnya.',
     visualTitle: 'Ruang visual utama',
@@ -36,7 +36,7 @@ export const ms: AppTranslations = {
   },
   calculator: {
     eyebrow: 'Penjejak Wallet',
-    title: 'Mulakan dengan alamat wallet anda',
+    title: 'Zakat Kripto',
     description:
       'Masukkan alamat Solana atau Ethereum terlebih dahulu. Jika Ethereum dipilih, tandakan rangkaian tambahan yang anda mahu jejaki untuk portfolio dan zakat.',
     inputLabel: 'Alamat Wallet',

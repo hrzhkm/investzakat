@@ -2,7 +2,7 @@ import type { AppTranslations } from './type'
 
 export const en: AppTranslations = {
   home: {
-    heroTitle: 'Calculate your investment zakat with less friction',
+    heroTitle: 'Calculate Zakat for Your Investments — Instantly',
     heroDescription:
       'A clearer starting point for your zakat flow, with a clean visual focus and room for the calculator experience underneath.',
     visualTitle: 'Primary visual space',
@@ -36,7 +36,7 @@ export const en: AppTranslations = {
   },
   calculator: {
     eyebrow: 'Wallet Tracker',
-    title: 'Start with your wallet address',
+    title: 'Zakat Crypto',
     description:
       'Enter a Solana or Ethereum address first. If Ethereum is selected, mark the extra networks you want tracked for portfolio and zakat calculations.',
     inputLabel: 'Wallet Address',
