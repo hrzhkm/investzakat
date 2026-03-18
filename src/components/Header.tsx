@@ -33,7 +33,7 @@ export default function Header() {
           <div className="flex shrink-0 items-center gap-4 sm:gap-6">
             <Link
               to="/crypto"
-              className="relative inline-flex text-sm font-medium text-slate-700 no-underline transition-colors duration-200 hover:text-slate-950 after:absolute after:bottom-[-0.2rem] after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-300 hover:after:scale-x-100"
+              className="relative inline-flex h-10 items-center text-sm font-medium leading-none text-slate-700 no-underline transition-colors duration-200 hover:text-slate-950 after:absolute after:bottom-1 after:left-0 after:h-px after:w-full after:origin-center after:scale-x-0 after:bg-current after:transition-transform after:duration-300 hover:after:scale-x-100"
               activeProps={{
                 className: 'text-slate-950 after:scale-x-100',
               }}
@@ -43,7 +43,7 @@ export default function Header() {
 
             <div className="group relative">
               <button
-                className="inline-flex text-sm font-medium text-slate-500 transition-colors duration-200 hover:text-slate-900"
+                className="inline-flex h-10 items-center text-sm font-medium leading-none text-slate-500 transition-colors duration-200 hover:text-slate-900"
                 type="button"
               >
                 {copy.stocks}
