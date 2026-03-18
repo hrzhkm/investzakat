@@ -56,7 +56,7 @@ export const ms: AppTranslations = {
     emptyState: 'Belum ada wallet ditambah.',
     assetsTitle: 'Nilai Aset',
     assetsDescription:
-      'Nilai ini masih hardcoded buat masa sekarang untuk memuktamadkan UI.',
+      'Jumlah ini dikira daripada baki native wallet secara langsung menggunakan harga semasa ETH dan SOL dalam MYR.',
     liveValueLabel: 'Nilai semasa portfolio',
     zakatStatusLabel: 'Status zakat',
     zakatDue: 'Perlu bayar zakat',
@@ -69,15 +69,11 @@ export const ms: AppTranslations = {
     nisabLabel: 'Anggaran nisab',
     walletsCountLabel: 'Wallet dipantau',
     chainsCountLabel: 'Network aktif',
-    nativeBalancesLabel: 'Baki native',
+    nativeBalancesLabel: 'Baki',
     balanceLoading: 'Sedang ambil baki semasa...',
     balanceUnavailable: 'Tidak tersedia',
     breakdownTitle: 'Pecahan aset',
-    breakdown: [
-      { label: 'Token utama', value: 'RM 96,400' },
-      { label: 'Stablecoins', value: 'RM 31,250' },
-      { label: 'Yield / staking', value: 'RM 18,950' },
-    ],
+    breakdown: [],
     solana: 'Solana',
     ethereum: 'Ethereum',
     chainLabels: {

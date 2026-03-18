@@ -1,7 +1,7 @@
 import type { FormEvent } from 'react'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { useQueries } from '@tanstack/react-query'
+import { useQueries, useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { BadgeCheck, Plus, ShieldCheck, Wallet } from 'lucide-react'
 import { Button } from '#/components/ui/button'
@@ -20,13 +20,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from '#/components/ui/select'
+import { latestNisabQueryOptions } from '../../lib/queries/nisab'
+import { cryptoPricesQueryOptions } from '../../lib/queries/cryptoPrices'
 import { walletNativeBalanceQueryOptions } from '../../lib/queries/walletBalance'
 import { validateEthereumAddress } from '../../lib/crypto/validateEthereumAddress'
 import { validateSolanaAddress } from '../../lib/crypto/validateSolanaAddress'
 import { useLanguage } from '../../lib/i18n'
 import { getTranslations } from '../../translations'
 import type { EthereumChain } from '../../translations/type'
-import type { Network, WalletBalanceRequest } from '../../lib/crypto/types'
+import type {
+  Network,
+  WalletBalanceRequest,
+  WalletNativeBalanceResult,
+} from '../../lib/crypto/types'
 
 export const Route = createFileRoute('/crypto/')({
   component: CryptoPage,
@@ -72,12 +78,6 @@ const itemVariants = {
   },
 }
 
-const hardcodedPortfolio = {
-  total: 146_600,
-  nisab: 28_000,
-  zakatEstimate: 3_665,
-}
-
 function CryptoPage() {
   const { language } = useLanguage()
   const copy = getTranslations(language).calculator
@@ -94,11 +94,30 @@ function CryptoPage() {
   const [wallets, setWallets] = useState<WalletEntry[]>([])
   const [addressError, setAddressError] = useState<string | null>(null)
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false)
+  const { data: nisabData } = useQuery(latestNisabQueryOptions)
+  const {
+    data: cryptoPrices,
+    isPending: isCryptoPricesPending,
+    isError: isCryptoPricesError,
+  } = useQuery(cryptoPricesQueryOptions)
   const walletBalanceQueries = useQueries({
     queries: wallets.map((wallet) => walletNativeBalanceQueryOptions(wallet)),
   })
-
-  const zakatDue = hardcodedPortfolio.total >= hardcodedPortfolio.nisab
+  const chainValues = aggregateChainValues(walletBalanceQueries, cryptoPrices)
+  const totalPortfolioValue = chainValues.reduce(
+    (sum, item) => sum + item.valueMyr,
+    0,
+  )
+  const nisabValue = nisabData?.nisabMyr ?? null
+  const zakatEstimate = totalPortfolioValue * 0.025
+  const zakatDue = nisabValue !== null && totalPortfolioValue >= nisabValue
+  const isSummaryLoading =
+    wallets.length > 0 &&
+    (isCryptoPricesPending ||
+      walletBalanceQueries.some((query) => query.isPending))
+  const summaryDescription = isCryptoPricesError
+    ? copy.balanceUnavailable
+    : copy.assetsDescription
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -188,10 +207,12 @@ function CryptoPage() {
                       {copy.assetsTitle}
                     </p>
                     <h2 className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-slate-950">
-                      RM {formatCurrency(hardcodedPortfolio.total)}
+                      {isSummaryLoading
+                        ? 'RM...'
+                        : formatMyrCurrency(totalPortfolioValue)}
                     </h2>
                     <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-                      {copy.assetsDescription}
+                      {summaryDescription}
                     </p>
                   </div>
 
@@ -408,11 +429,19 @@ function CryptoPage() {
                 <div className="mt-5 grid gap-4 sm:grid-cols-2">
                   <MetricCard
                     label={copy.zakatEstimateLabel}
-                    value={`RM ${formatCurrency(hardcodedPortfolio.zakatEstimate)}`}
+                    value={
+                      isSummaryLoading
+                        ? 'RM...'
+                        : formatMyrCurrency(zakatEstimate)
+                    }
                   />
                   <MetricCard
                     label={copy.nisabLabel}
-                    value={`RM ${formatCurrency(hardcodedPortfolio.nisab)}`}
+                    value={
+                      nisabValue === null
+                        ? 'RM...'
+                        : formatMyrCurrency(nisabValue)
+                    }
                   />
                 </div>
 
@@ -422,17 +451,27 @@ function CryptoPage() {
                   </p>
 
                   <div className="mt-4 space-y-3">
-                    {copy.breakdown.map((item) => (
-                      <div
-                        className="flex items-center justify-between rounded-[1rem] bg-slate-50 px-4 py-3 text-sm"
-                        key={item.label}
-                      >
-                        <span className="text-slate-600">{item.label}</span>
-                        <span className="font-semibold text-slate-950">
-                          {item.value}
-                        </span>
+                    {chainValues.length > 0 ? (
+                      chainValues.map((item) => (
+                        <div
+                          className="flex items-center justify-between rounded-[1rem] bg-slate-50 px-4 py-3 text-sm"
+                          key={item.chain}
+                        >
+                          <span className="text-slate-600">
+                            {item.chain === 'solana'
+                              ? copy.solana
+                              : copy.chainLabels[item.chain]}
+                          </span>
+                          <span className="font-semibold text-slate-950">
+                            {formatMyrCurrency(item.valueMyr)}
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="rounded-[1rem] bg-slate-50 px-4 py-3 text-sm text-slate-500">
+                        {copy.emptyState}
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
               </div>
@@ -576,8 +615,55 @@ function MetricCard({ label, value }: { label: string; value: string }) {
   )
 }
 
+function aggregateChainValues(
+  walletBalanceQueries: Array<{
+    data?: WalletNativeBalanceResult
+  }>,
+  cryptoPrices: { ethereumMyr: number; solanaMyr: number } | undefined,
+) {
+  if (!cryptoPrices) {
+    return []
+  }
+
+  const valuesByChain = new Map<string, number>()
+
+  for (const query of walletBalanceQueries) {
+    for (const balance of query.data?.balances ?? []) {
+      if (balance.error || !balance.formatted) {
+        continue
+      }
+
+      const numericBalance = Number.parseFloat(balance.formatted)
+
+      if (Number.isNaN(numericBalance)) {
+        continue
+      }
+
+      const priceMyr =
+        balance.symbol === 'SOL'
+          ? cryptoPrices.solanaMyr
+          : cryptoPrices.ethereumMyr
+      const nextValue =
+        (valuesByChain.get(balance.chain) ?? 0) + numericBalance * priceMyr
+
+      valuesByChain.set(balance.chain, nextValue)
+    }
+  }
+
+  return Array.from(valuesByChain.entries())
+    .map(([chain, valueMyr]) => ({
+      chain: chain as 'solana' | EthereumChain,
+      valueMyr,
+    }))
+    .sort((left, right) => right.valueMyr - left.valueMyr)
+}
+
 function formatCurrency(value: number) {
   return new Intl.NumberFormat('en-MY', {
     maximumFractionDigits: 0,
   }).format(value)
+}
+
+function formatMyrCurrency(value: number) {
+  return `RM ${formatCurrency(value)}`
 }

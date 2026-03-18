@@ -56,7 +56,7 @@ export const en: AppTranslations = {
     emptyState: 'No wallet has been added yet.',
     assetsTitle: 'Assets Value',
     assetsDescription:
-      'These values are hardcoded for now so the UI can be finalized first.',
+      'This total is calculated from live native wallet balances using current ETH and SOL prices in MYR.',
     liveValueLabel: 'Current portfolio value',
     zakatStatusLabel: 'Zakat status',
     zakatDue: 'Zakat payment required',
@@ -69,15 +69,11 @@ export const en: AppTranslations = {
     nisabLabel: 'Estimated nisab',
     walletsCountLabel: 'Tracked wallets',
     chainsCountLabel: 'Active networks',
-    nativeBalancesLabel: 'Native balances',
+    nativeBalancesLabel: 'Balances',
     balanceLoading: 'Fetching live balance...',
     balanceUnavailable: 'Unavailable',
     breakdownTitle: 'Asset breakdown',
-    breakdown: [
-      { label: 'Core tokens', value: 'RM 96,400' },
-      { label: 'Stablecoins', value: 'RM 31,250' },
-      { label: 'Yield / staking', value: 'RM 18,950' },
-    ],
+    breakdown: [],
     solana: 'Solana',
     ethereum: 'Ethereum',
     chainLabels: {
