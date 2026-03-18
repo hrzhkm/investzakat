@@ -431,8 +431,8 @@ function CryptoPage() {
                   </div>
                 </div>
 
-                <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1.7fr)_minmax(20rem,0.9fr)]">
-                  <div>
+                <div className="mt-5 grid items-stretch gap-5 xl:grid-cols-[minmax(0,1.7fr)_minmax(20rem,0.9fr)]">
+                  <div className="flex h-full flex-col">
                     <div className="grid gap-4 sm:grid-cols-2">
                       <MetricCard
                         label={copy.zakatEstimateLabel}
@@ -452,31 +452,35 @@ function CryptoPage() {
                       />
                     </div>
 
-                    <div className="mt-5 rounded-[1.7rem] border border-slate-200 bg-white/90 p-5 shadow-[0_18px_36px_rgba(15,23,42,0.06)]">
+                    <div className="mt-5 flex flex-1 flex-col rounded-[1.7rem] border border-slate-200 bg-white/90 p-5 shadow-[0_18px_36px_rgba(15,23,42,0.06)]">
                       <p className="text-sm font-semibold text-slate-950">
                         {copy.breakdownTitle}
                       </p>
 
-                      <div className="mt-4 space-y-3">
+                      <div className="mt-4 flex flex-1 flex-col">
                         {chainValues.length > 0 ? (
-                          chainValues.map((item) => (
-                            <div
-                              className="flex items-center justify-between rounded-[1rem] bg-slate-50 px-4 py-3 text-sm"
-                              key={item.chain}
-                            >
-                              <span className="text-slate-600">
-                                {item.chain === 'solana'
-                                  ? copy.solana
-                                  : copy.chainLabels[item.chain]}
-                              </span>
-                              <span className="font-semibold text-slate-950">
-                                {formatMyrCurrency(item.valueMyr)}
-                              </span>
-                            </div>
-                          ))
+                          <div className="space-y-3">
+                            {chainValues.map((item) => (
+                              <div
+                                className="flex items-center justify-between rounded-[1rem] bg-slate-50 px-4 py-3 text-sm"
+                                key={item.chain}
+                              >
+                                <span className="text-slate-600">
+                                  {item.chain === 'solana'
+                                    ? copy.solana
+                                    : copy.chainLabels[item.chain]}
+                                </span>
+                                <span className="font-semibold text-slate-950">
+                                  {formatMyrCurrency(item.valueMyr)}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
                         ) : (
-                          <div className="rounded-[1rem] bg-slate-50 px-4 py-3 text-sm text-slate-500">
-                            {copy.emptyState}
+                          <div className="flex flex-1 items-center">
+                            <div className="flex min-h-full w-full flex-1 items-center justify-center rounded-[1.25rem] border border-dashed border-slate-200 bg-[linear-gradient(180deg,#f8fafc,#f1f5f9)] px-6 py-5 text-center text-sm text-slate-500">
+                              {copy.emptyState}
+                            </div>
                           </div>
                         )}
                       </div>
@@ -653,7 +657,7 @@ function AssetDistributionCard({
   let offset = 0
 
   return (
-    <aside className="rounded-[1.7rem] border border-slate-200 bg-white/92 p-5 shadow-[0_18px_36px_rgba(15,23,42,0.06)]">
+    <aside className="h-full rounded-[1.7rem] border border-slate-200 bg-white/92 p-5 shadow-[0_18px_36px_rgba(15,23,42,0.06)]">
       <p className="text-sm font-semibold text-slate-950">
         {copy.distributionTitle}
       </p>
