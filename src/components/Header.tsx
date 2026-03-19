@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
+import { getDisplayErrorMessage } from '../lib/displayError'
 import { formatMyrCurrency } from '../lib/nisab'
 import { latestNisabQueryOptions } from '../lib/queries/nisab'
 import { useLanguage } from '../lib/i18n'
@@ -8,10 +9,22 @@ import { getTranslations } from '../translations'
 export default function Header() {
   const { language } = useLanguage()
   const copy = getTranslations(language).header
-  const { data: nisabData } = useQuery(latestNisabQueryOptions)
-  const nisabValue = nisabData
-    ? formatMyrCurrency(nisabData.nisabMyr)
-    : 'RM...'
+  const {
+    data: nisabData,
+    error: nisabError,
+    isError: isNisabError,
+    isPending: isNisabPending,
+  } = useQuery(latestNisabQueryOptions)
+  const nisabValue = isNisabPending
+    ? 'RM...'
+    : nisabData
+      ? formatMyrCurrency(nisabData.nisabMyr)
+      : isNisabError
+        ? `${copy.errorPrefix}: ${getDisplayErrorMessage(
+            nisabError,
+            copy.nisabUnavailable,
+          )}`
+        : copy.nisabUnavailable
 
   return (
     <header className="relative z-20 px-4 pt-7 sm:px-6 lg:px-8">
@@ -24,8 +37,10 @@ export default function Header() {
             >
               investzakat
             </Link>
-
-            <p className="min-w-0 truncate text-xs font-medium text-slate-600 sm:text-sm">
+            <p
+              className="min-w-0 truncate text-xs font-medium text-slate-600 sm:text-sm"
+              title={`${copy.nisab} = ${nisabValue}`}
+            >
               {copy.nisab} = {nisabValue}
             </p>
           </div>

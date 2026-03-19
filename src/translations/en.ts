@@ -39,6 +39,7 @@ export const en: AppTranslations = {
     title: 'Zakat Crypto',
     description:
       'Enter a Solana or Ethereum address first. If Ethereum is selected, mark the extra networks you want tracked for portfolio and zakat calculations.',
+    errorPrefix: 'Error',
     inputLabel: 'Wallet Address',
     inputPlaceholder: 'Paste your wallet address here',
     networkLabel: 'Network',
@@ -68,6 +69,7 @@ export const en: AppTranslations = {
       'Your asset value is still below the current nisab estimate.',
     zakatEstimateLabel: '2.5% zakat estimate',
     nisabLabel: 'Estimated nisab',
+    nisabUnavailable: 'Nisab data is unavailable.',
     walletsCountLabel: 'Tracked wallets',
     chainsCountLabel: 'Active networks',
     nativeBalancesLabel: 'Balances',
@@ -92,7 +94,9 @@ export const en: AppTranslations = {
   header: {
     calculator: 'Crypto',
     comingSoon: 'Feature coming soon',
+    errorPrefix: 'Error',
     nisab: 'Nisab',
+    nisabUnavailable: 'Nisab data is unavailable.',
     stocks: 'Stocks',
     wallet: 'Connect Wallet',
   },

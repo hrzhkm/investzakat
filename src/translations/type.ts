@@ -27,6 +27,7 @@ export type CalculatorTranslations = {
   eyebrow: string
   title: string
   description: string
+  errorPrefix: string
   addWalletDescription: string
   inputLabel: string
   inputPlaceholder: string
@@ -50,6 +51,7 @@ export type CalculatorTranslations = {
   zakatDescriptionNotDue: string
   zakatEstimateLabel: string
   nisabLabel: string
+  nisabUnavailable: string
   walletsCountLabel: string
   chainsCountLabel: string
   nativeBalancesLabel: string
@@ -71,7 +73,9 @@ export type LanguageSwitcherTranslations = {
 export type HeaderTranslations = {
   calculator: string
   comingSoon: string
+  errorPrefix: string
   nisab: string
+  nisabUnavailable: string
   stocks: string
   wallet: string
 }

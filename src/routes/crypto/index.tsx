@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '#/components/ui/select'
+import { getDisplayErrorMessage } from '../../lib/displayError'
 import { latestNisabQueryOptions } from '../../lib/queries/nisab'
 import { cryptoPricesQueryOptions } from '../../lib/queries/cryptoPrices'
 import { walletNativeBalanceQueryOptions } from '../../lib/queries/walletBalance'
@@ -101,9 +102,15 @@ function CryptoPage() {
   const [hasLoadedWallets, setHasLoadedWallets] = useState(false)
   const [addressError, setAddressError] = useState<string | null>(null)
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false)
-  const { data: nisabData } = useQuery(latestNisabQueryOptions)
+  const {
+    data: nisabData,
+    error: nisabError,
+    isError: isNisabError,
+    isPending: isNisabPending,
+  } = useQuery(latestNisabQueryOptions)
   const {
     data: cryptoPrices,
+    error: cryptoPricesError,
     isPending: isCryptoPricesPending,
     isError: isCryptoPricesError,
   } = useQuery(cryptoPricesQueryOptions)
@@ -123,8 +130,21 @@ function CryptoPage() {
     (isCryptoPricesPending ||
       walletBalanceQueries.some((query) => query.isPending))
   const summaryDescription = isCryptoPricesError
-    ? copy.balanceUnavailable
+    ? `${copy.errorPrefix}: ${getDisplayErrorMessage(
+        cryptoPricesError,
+        copy.balanceUnavailable,
+      )}`
     : copy.assetsDescription
+  const nisabMetricValue = isNisabPending
+    ? 'RM...'
+    : nisabValue !== null
+      ? formatMyrCurrency(nisabValue)
+      : isNisabError
+        ? `${copy.errorPrefix}: ${getDisplayErrorMessage(
+            nisabError,
+            copy.nisabUnavailable,
+          )}`
+        : copy.nisabUnavailable
 
   useEffect(() => {
     setWallets(getStoredWallets())
@@ -459,11 +479,8 @@ function CryptoPage() {
                       />
                       <MetricCard
                         label={copy.nisabLabel}
-                        value={
-                          nisabValue === null
-                            ? 'RM...'
-                            : formatMyrCurrency(nisabValue)
-                        }
+                        isError={isNisabError || nisabValue === null}
+                        value={nisabMetricValue}
                       />
                     </div>
 
@@ -586,7 +603,11 @@ function CryptoPage() {
 
                             {balanceQuery.isError ? (
                               <p className="mt-3 text-sm font-medium text-rose-600">
-                                {copy.balanceUnavailable}
+                                {copy.errorPrefix}:{' '}
+                                {getDisplayErrorMessage(
+                                  balanceQuery.error,
+                                  copy.balanceUnavailable,
+                                )}
                               </p>
                             ) : null}
 
@@ -611,7 +632,10 @@ function CryptoPage() {
                                     >
                                       {balance.formatted
                                         ? `${balance.formatted} ${balance.symbol}`
-                                        : copy.balanceUnavailable}
+                                        : getDisplayErrorMessage(
+                                            balance.error,
+                                            copy.balanceUnavailable,
+                                          )}
                                     </span>
                                   </div>
                                 ))}
@@ -636,13 +660,27 @@ function CryptoPage() {
   )
 }
 
-function MetricCard({ label, value }: { label: string; value: string }) {
+function MetricCard({
+  label,
+  value,
+  isError = false,
+}: {
+  label: string
+  value: string
+  isError?: boolean
+}) {
   return (
     <div className="rounded-[1.5rem] border border-slate-200 bg-white/85 p-4 shadow-[0_14px_28px_rgba(15,23,42,0.05)]">
       <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">
         {label}
       </p>
-      <p className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-slate-950">
+      <p
+        className={`mt-3 break-words font-semibold ${
+          isError
+            ? 'text-sm leading-6 text-rose-600'
+            : 'text-2xl tracking-[-0.04em] text-slate-950'
+        }`}
+      >
         {value}
       </p>
     </div>

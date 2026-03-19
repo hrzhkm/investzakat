@@ -39,6 +39,7 @@ export const ms: AppTranslations = {
     title: 'Zakat Kripto',
     description:
       'Masukkan alamat Solana atau Ethereum terlebih dahulu. Jika Ethereum dipilih, tandakan rangkaian tambahan yang anda mahu jejaki untuk portfolio dan zakat.',
+    errorPrefix: 'Ralat',
     inputLabel: 'Alamat Wallet',
     inputPlaceholder: 'Tampal alamat wallet anda di sini',
     networkLabel: 'Network',
@@ -68,6 +69,7 @@ export const ms: AppTranslations = {
       'Jumlah aset anda masih di bawah anggaran nisab semasa.',
     zakatEstimateLabel: 'Anggaran zakat 2.5%',
     nisabLabel: 'Anggaran nisab',
+    nisabUnavailable: 'Data nisab tidak tersedia.',
     walletsCountLabel: 'Wallet dipantau',
     chainsCountLabel: 'Network aktif',
     nativeBalancesLabel: 'Baki',
@@ -92,7 +94,9 @@ export const ms: AppTranslations = {
   header: {
     calculator: 'Kripto',
     comingSoon: 'Fungsi akan datang',
+    errorPrefix: 'Ralat',
     nisab: 'Nisab',
+    nisabUnavailable: 'Data nisab tidak tersedia.',
     stocks: 'Saham',
     wallet: 'Sambung Wallet',
   },
