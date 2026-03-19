@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+
+  app:
+    image: ${GHCR_NAMESPACE}/investzakat:${IMAGE_TAG}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      VITE_DYNAMIC_ENVIRONMENT_ID: ${VITE_DYNAMIC_ENVIRONMENT_ID}
+      VITE_COINGECKO_API_KEY: ${VITE_COINGECKO_API_KEY}
+      FINNHUB_API_KEY: ${FINNHUB_API_KEY}
+      SOLANA_RPC_URL: ${SOLANA_RPC_URL}
+      ETHEREUM_MAINNET_RPC_URL: ${ETHEREUM_MAINNET_RPC_URL}
+      BASE_RPC_URL: ${BASE_RPC_URL}
+      ARBITRUM_RPC_URL: ${ARBITRUM_RPC_URL}
+      OPTIMISM_RPC_URL: ${OPTIMISM_RPC_URL}
+      REDIS_URL: redis://redis:6379/0
+    ports:
+      - "3000:3000"
+
+volumes:
+  db_data:
+  redis_data:
