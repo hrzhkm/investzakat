@@ -12,6 +12,8 @@ COPY . .
 ARG VITE_DYNAMIC_ENVIRONMENT_ID
 ENV VITE_DYNAMIC_ENVIRONMENT_ID=${VITE_DYNAMIC_ENVIRONMENT_ID}
 
+RUN DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres \
+  pnpm prisma generate --schema prisma/schema.prisma
 RUN pnpm build
 
 FROM node:24-alpine AS runtime
