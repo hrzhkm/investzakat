@@ -44,6 +44,7 @@ export const ms: AppTranslations = {
     networkLabel: 'Network',
     networkDescription:
       'Buat pilihan rangkaian asas sebelum alamat disimpan ke senarai pemantauan.',
+    addWalletDescription: 'WalletDescription',
     solanaValidationError: 'Masukkan alamat Solana yang sah.',
     ethereumValidationError: 'Masukkan alamat Ethereum yang sah.',
     chainsLabel: 'Ethereum Networks To Track',

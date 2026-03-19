@@ -73,8 +73,9 @@ function HomePage() {
                   alt={copy.visualTitle}
                   animate={{
                     y: [0, -8, 0],
+                    scale: [1.035, 1.035, 1.035],
                   }}
-                  className="block h-auto w-full"
+                  className="block h-auto w-full origin-center will-change-transform"
                   src="/images/calculator.png"
                   transition={{
                     duration: 5.5,

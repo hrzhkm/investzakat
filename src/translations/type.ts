@@ -27,6 +27,7 @@ export type CalculatorTranslations = {
   eyebrow: string
   title: string
   description: string
+  addWalletDescription: string
   inputLabel: string
   inputPlaceholder: string
   networkLabel: string
