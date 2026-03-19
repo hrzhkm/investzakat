@@ -1,6 +1,4 @@
 import { createServerFn } from '@tanstack/react-start'
-import { applyCoinGeckoApiKey } from '../server/coingecko'
-import { getRedisClient } from '../server/redis'
 
 type CryptoPriceResponse = {
   ethereum?: {
@@ -55,6 +53,7 @@ export async function resolveCryptoPrices(): Promise<CryptoPrices> {
 }
 
 async function fetchCryptoPricesFromCoinGecko(): Promise<CryptoPrices> {
+  const { applyCoinGeckoApiKey } = await import('../server/coingecko')
   const endpoint = new URL(coingeckoSimplePriceUrl)
   const headers: HeadersInit = {
     accept: 'application/json',
@@ -106,6 +105,7 @@ async function getStaleCryptoPrices() {
 }
 
 async function getCryptoPricesFromCacheKey(cacheKey: string) {
+  const { getRedisClient } = await import('../server/redis')
   const redis = getRedisClient()
 
   if (!redis) {
@@ -141,6 +141,7 @@ async function getCryptoPricesFromCacheKey(cacheKey: string) {
 }
 
 async function cacheCryptoPrices(prices: CryptoPrices) {
+  const { getRedisClient } = await import('../server/redis')
   const redis = getRedisClient()
 
   if (!redis) {
@@ -162,7 +163,7 @@ async function cacheCryptoPrices(prices: CryptoPrices) {
 }
 
 async function ensureRedisConnection(
-  redis: NonNullable<ReturnType<typeof getRedisClient>>,
+  redis: { status: string; connect(): Promise<unknown> },
 ) {
   if (redis.status === 'wait') {
     await redis.connect()

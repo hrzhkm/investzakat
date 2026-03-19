@@ -1,3 +1,5 @@
+import '@tanstack/react-start/server-only'
+
 import Redis from 'ioredis'
 
 let redisClient: Redis | null | undefined
