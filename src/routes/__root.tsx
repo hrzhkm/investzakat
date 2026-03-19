@@ -40,6 +40,20 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         rel: 'stylesheet',
         href: appCss,
       },
+      {
+        rel: 'icon',
+        type: 'image/x-icon',
+        href: '/investzakat-logo-enlarge.ico',
+      },
+      {
+        rel: 'shortcut icon',
+        type: 'image/x-icon',
+        href: '/investzakat-logo-enlarge.ico',
+      },
+      {
+        rel: 'apple-touch-icon',
+        href: '/investzakat-logo.png',
+      },
     ],
   }),
   shellComponent: RootDocument,
