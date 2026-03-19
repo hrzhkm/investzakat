@@ -24,7 +24,9 @@ const cryptoPricesCacheTtlSeconds = 60 * 10
 
 export const getCryptoPrices = createServerFn({
   method: 'GET',
-}).handler(async (): Promise<CryptoPrices> => {
+}).handler(async (): Promise<CryptoPrices> => resolveCryptoPrices())
+
+export async function resolveCryptoPrices(): Promise<CryptoPrices> {
   const cachedPrices = await getCachedCryptoPrices()
 
   if (cachedPrices) {
@@ -50,7 +52,7 @@ export const getCryptoPrices = createServerFn({
 
     throw error
   }
-})
+}
 
 async function fetchCryptoPricesFromCoinGecko(): Promise<CryptoPrices> {
   const endpoint = new URL(coingeckoSimplePriceUrl)

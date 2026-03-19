@@ -1,11 +1,11 @@
 import { createServerFn } from '@tanstack/react-start'
 import { NISAB_GOLD_GRAMS } from './nisab'
 
-export const getLatestNisab = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  const { getLatestGoldPricePerGram } = await import('#/lib/server/goldData')
-  const latestGoldPrice = await getLatestGoldPricePerGram()
+export async function resolveLatestNisab() {
+  const { getResolvableLatestGoldPricePerGram } = await import(
+    '#/lib/server/goldData'
+  )
+  const latestGoldPrice = await getResolvableLatestGoldPricePerGram()
 
   if (!latestGoldPrice) {
     return null
@@ -16,4 +16,8 @@ export const getLatestNisab = createServerFn({
     nisabMyr: latestGoldPrice.priceMyrPerGram * NISAB_GOLD_GRAMS,
     priceMyrPerGram: latestGoldPrice.priceMyrPerGram,
   }
-})
+}
+
+export const getLatestNisab = createServerFn({
+  method: 'GET',
+}).handler(async () => resolveLatestNisab())

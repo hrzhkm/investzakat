@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CryptoIndexRouteImport } from './routes/crypto/index'
 import { Route as ApiGoldRouteImport } from './routes/api/gold'
 import { Route as ApiFetchCoinsRouteImport } from './routes/api/fetchCoins'
+import { Route as ApiHealthMarketDataRouteImport } from './routes/api/health/market-data'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +35,25 @@ const ApiFetchCoinsRoute = ApiFetchCoinsRouteImport.update({
   path: '/api/fetchCoins',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiHealthMarketDataRoute = ApiHealthMarketDataRouteImport.update({
+  id: '/api/health/market-data',
+  path: '/api/health/market-data',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/api/fetchCoins': typeof ApiFetchCoinsRoute
   '/api/gold': typeof ApiGoldRoute
   '/crypto/': typeof CryptoIndexRoute
+  '/api/health/market-data': typeof ApiHealthMarketDataRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/fetchCoins': typeof ApiFetchCoinsRoute
   '/api/gold': typeof ApiGoldRoute
   '/crypto': typeof CryptoIndexRoute
+  '/api/health/market-data': typeof ApiHealthMarketDataRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,30 @@ export interface FileRoutesById {
   '/api/fetchCoins': typeof ApiFetchCoinsRoute
   '/api/gold': typeof ApiGoldRoute
   '/crypto/': typeof CryptoIndexRoute
+  '/api/health/market-data': typeof ApiHealthMarketDataRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/fetchCoins' | '/api/gold' | '/crypto/'
+  fullPaths:
+    | '/'
+    | '/api/fetchCoins'
+    | '/api/gold'
+    | '/crypto/'
+    | '/api/health/market-data'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/fetchCoins' | '/api/gold' | '/crypto'
-  id: '__root__' | '/' | '/api/fetchCoins' | '/api/gold' | '/crypto/'
+  to:
+    | '/'
+    | '/api/fetchCoins'
+    | '/api/gold'
+    | '/crypto'
+    | '/api/health/market-data'
+  id:
+    | '__root__'
+    | '/'
+    | '/api/fetchCoins'
+    | '/api/gold'
+    | '/crypto/'
+    | '/api/health/market-data'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +92,7 @@ export interface RootRouteChildren {
   ApiFetchCoinsRoute: typeof ApiFetchCoinsRoute
   ApiGoldRoute: typeof ApiGoldRoute
   CryptoIndexRoute: typeof CryptoIndexRoute
+  ApiHealthMarketDataRoute: typeof ApiHealthMarketDataRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +125,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiFetchCoinsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/health/market-data': {
+      id: '/api/health/market-data'
+      path: '/api/health/market-data'
+      fullPath: '/api/health/market-data'
+      preLoaderRoute: typeof ApiHealthMarketDataRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +140,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiFetchCoinsRoute: ApiFetchCoinsRoute,
   ApiGoldRoute: ApiGoldRoute,
   CryptoIndexRoute: CryptoIndexRoute,
+  ApiHealthMarketDataRoute: ApiHealthMarketDataRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

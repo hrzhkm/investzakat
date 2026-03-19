@@ -10,6 +10,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
+    "deploy:verify": "tsx scripts/verify-deployment.ts",
     "test:wallet-balance": "dotenv -e .env.local -- tsx scripts/test-wallet-balances.ts",
     "lint": "eslint",
     "format": "prettier --check .",
