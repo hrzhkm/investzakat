@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { applyCoinGeckoApiKey } from '#/lib/server/coingecko'
 
 const COINGECKO_XAUT_URL = 'https://api.coingecko.com/api/v3/coins/tether-gold'
 
@@ -31,17 +32,16 @@ export const Route = createFileRoute('/api/gold')({
             )
           }
 
-          const apiKey = process.env.VITE_COINGECKO_API_KEY
           const endpoint = new URL(COINGECKO_XAUT_URL)
-
-          if (apiKey) {
-            endpoint.searchParams.set('x_cg_demo_api_key', apiKey)
+          const headers = {
+            accept: 'application/json',
           }
 
+          applyCoinGeckoApiKey(endpoint, headers)
+
           const upstreamResponse = await fetch(endpoint, {
-            headers: {
-              accept: 'application/json',
-            },
+            headers,
+            signal: AbortSignal.timeout(10_000),
           })
 
           if (!upstreamResponse.ok) {

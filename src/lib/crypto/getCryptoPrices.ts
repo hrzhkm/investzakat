@@ -1,4 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
+import { applyCoinGeckoApiKey } from '../server/coingecko'
 import { getRedisClient } from '../server/redis'
 
 type CryptoPriceResponse = {
@@ -18,6 +19,7 @@ export type CryptoPrices = {
 const coingeckoSimplePriceUrl =
   'https://api.coingecko.com/api/v3/simple/price?ids=ethereum,solana&vs_currencies=myr'
 const cryptoPricesCacheKey = 'crypto:prices:myr:ethereum-solana'
+const cryptoPricesStaleCacheKey = 'crypto:prices:myr:ethereum-solana:last-good'
 const cryptoPricesCacheTtlSeconds = 60 * 10
 
 export const getCryptoPrices = createServerFn({
@@ -29,30 +31,47 @@ export const getCryptoPrices = createServerFn({
     return cachedPrices
   }
 
-  const freshPrices = await fetchCryptoPricesFromCoinGecko()
+  try {
+    const freshPrices = await fetchCryptoPricesFromCoinGecko()
 
-  await cacheCryptoPrices(freshPrices)
+    await cacheCryptoPrices(freshPrices)
 
-  return freshPrices
+    return freshPrices
+  } catch (error) {
+    const stalePrices = await getStaleCryptoPrices()
+
+    if (stalePrices) {
+      console.error(
+        'CoinGecko crypto price fetch failed; serving last known prices instead.',
+        error,
+      )
+      return stalePrices
+    }
+
+    throw error
+  }
 })
 
 async function fetchCryptoPricesFromCoinGecko(): Promise<CryptoPrices> {
+  const endpoint = new URL(coingeckoSimplePriceUrl)
   const headers: HeadersInit = {
     accept: 'application/json',
   }
 
-  const apiKey = process.env.VITE_COINGECKO_API_KEY
+  applyCoinGeckoApiKey(endpoint, headers)
 
-  if (apiKey) {
-    headers['x-cg-demo-api-key'] = apiKey
-  }
-
-  const response = await fetch(coingeckoSimplePriceUrl, {
+  const response = await fetch(endpoint, {
     headers,
+    signal: AbortSignal.timeout(10_000),
   })
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch crypto prices: ${response.statusText}`)
+    const details = await response.text()
+    throw new Error(
+      `Failed to fetch crypto prices from CoinGecko (${response.status}): ${
+        details || response.statusText
+      }`,
+    )
   }
 
   const data = (await response.json()) as CryptoPriceResponse
@@ -77,6 +96,14 @@ async function fetchCryptoPricesFromCoinGecko(): Promise<CryptoPrices> {
 }
 
 async function getCachedCryptoPrices() {
+  return getCryptoPricesFromCacheKey(cryptoPricesCacheKey)
+}
+
+async function getStaleCryptoPrices() {
+  return getCryptoPricesFromCacheKey(cryptoPricesStaleCacheKey)
+}
+
+async function getCryptoPricesFromCacheKey(cacheKey: string) {
   const redis = getRedisClient()
 
   if (!redis) {
@@ -85,7 +112,7 @@ async function getCachedCryptoPrices() {
 
   try {
     await ensureRedisConnection(redis)
-    const cached = await redis.get(cryptoPricesCacheKey)
+    const cached = await redis.get(cacheKey)
 
     if (!cached) {
       return null
@@ -126,6 +153,7 @@ async function cacheCryptoPrices(prices: CryptoPrices) {
       'EX',
       cryptoPricesCacheTtlSeconds,
     )
+    await redis.set(cryptoPricesStaleCacheKey, JSON.stringify(prices))
   } catch {
     // Cache write failures should not break price fetching.
   }
