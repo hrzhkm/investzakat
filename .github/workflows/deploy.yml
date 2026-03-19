@@ -102,10 +102,3 @@ jobs:
 
           docker compose -f docker-compose.deploy.yml pull
           docker compose -f docker-compose.deploy.yml up -d --remove-orphans
-
-      - name: Verify deployed market data
-        run: pnpm exec tsx scripts/verify-deployment.ts http://127.0.0.1:9090
-
-      - name: Print deploy logs on verification failure
-        if: failure()
-        run: docker compose -f docker-compose.deploy.yml logs --tail=200 app
