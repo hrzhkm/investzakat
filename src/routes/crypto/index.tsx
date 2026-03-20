@@ -84,6 +84,8 @@ const itemVariants = {
 
 const chartColors = ['#0f766e', '#0284c7', '#f59e0b', '#7c3aed', '#ef4444']
 const WALLET_STORAGE_KEY = 'investzakat-crypto-wallets'
+const PPZ_DIGITAL_ASSET_ZAKAT_URL =
+  'https://sharlife.my/zakat-asset-digital/ppz'
 
 function CryptoPage() {
   const { language } = useLanguage()
@@ -203,6 +205,25 @@ function CryptoPage() {
 
       return [...current, chain]
     })
+  }
+
+  async function handlePayZakat(walletAddress: string) {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    try {
+      await navigator.clipboard.writeText(walletAddress)
+    } catch {
+      // Ignore clipboard failures and still continue to the payment page.
+    }
+
+    const paymentWindow = window.open(PPZ_DIGITAL_ASSET_ZAKAT_URL, '_blank')
+
+    if (!paymentWindow) {
+      window.location.href = PPZ_DIGITAL_ASSET_ZAKAT_URL
+      return
+    }
   }
 
   return (
@@ -588,6 +609,18 @@ function CryptoPage() {
                                 </span>
                               ))}
                             </div>
+                          </div>
+
+                          <div className="mt-4">
+                            <Button
+                              className="h-11 rounded-xl border border-emerald-700 bg-emerald-600 px-5 text-white shadow-[0_16px_34px_rgba(5,150,105,0.18)] hover:bg-emerald-700"
+                              onClick={() => {
+                                handlePayZakat(wallet.address)
+                              }}
+                              type="button"
+                            >
+                              Pay Zakat
+                            </Button>
                           </div>
 
                           <div className="mt-4 rounded-[1.35rem] border border-slate-200 bg-slate-50/80 p-4">
